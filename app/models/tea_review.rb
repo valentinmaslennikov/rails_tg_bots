@@ -1,0 +1,2 @@
+class TeaReview < ApplicationRecord
+end
