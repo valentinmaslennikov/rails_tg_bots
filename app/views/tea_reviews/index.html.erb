@@ -1,0 +1,25 @@
+<div class="bg-image"></div>
+<div class="container tea-table">
+  <div class="row">
+    <div class="col-sm">
+      <table class="table table-striped table-dark">
+        <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Name</th>
+          <th scope="col">Review</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @tea_reviews.each do |t| %>
+          <tr>
+            <th scope="row"><%= t.id %></th>
+            <td><%= t.name %></td>
+            <td><%= t.review %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
