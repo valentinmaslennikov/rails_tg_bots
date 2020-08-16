@@ -94,6 +94,8 @@
     <orderEntry type="library" scope="PROVIDED" name="webpacker (v4.2.2, RVM: ruby-2.7.1 [tea_bot]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="websocket-driver (v0.7.3, RVM: ruby-2.7.1 [tea_bot]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="websocket-extensions (v0.1.5, RVM: ruby-2.7.1 [tea_bot]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="will_paginate (v3.3.0, RVM: ruby-2.7.1 [tea_bot]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="will_paginate-bootstrap4 (v0.2.2, RVM: ruby-2.7.1 [tea_bot]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="zeitwerk (v2.4.0, RVM: ruby-2.7.1 [tea_bot]) [gem]" level="application" />
   </component>
   <component name="RModuleSettingsStorage">
