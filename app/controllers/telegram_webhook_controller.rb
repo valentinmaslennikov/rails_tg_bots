@@ -8,7 +8,7 @@ class TelegramWebhookController < Telegram::Bot::UpdatesController
   # Define method with same name to respond to this updates.
   def message(message)
     # message can be also accessed via instance method
-    message == self.payload # true
+    message == self.payload # truegit push heroku master
     tea = message['text'].scan(/чай:(.*)/i)
     review = message['text'].scan(/отзыв:(.*)/im)
     TeaReview.create!(tea: tea, review: review) if tea.present? && review.present?
@@ -34,7 +34,7 @@ class TelegramWebhookController < Telegram::Bot::UpdatesController
     # There is `respond_with` helper to set `chat_id` from received message:
     respond_with :message, text: response
     # `reply_with` also sets `reply_to_message_id`:
-    reply_with :photo, photo: File.open('party.jpg')
+    # reply_with :photo, photo: File.open('party.jpg')
   end
 
   private
