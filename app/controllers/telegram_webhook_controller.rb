@@ -9,8 +9,8 @@ class TelegramWebhookController < Telegram::Bot::UpdatesController
   def message(message)
     # message can be also accessed via instance method
     message == self.payload # truegit push heroku master
-    tea = message['text'].scan(/чай:(.*)/i).last.first
-    review = message['text'].scan(/отзыв:(.*)/im).last.first
+    tea = message['text'].scan(/чай:(.*)/i)&.last&.first&.strip
+    review = message['text'].scan(/отзыв:(.*)/im)&.last&.first&.strip
     TeaReview.create!(tea: tea, review: review) if tea.present? && review.present?
   end
 
