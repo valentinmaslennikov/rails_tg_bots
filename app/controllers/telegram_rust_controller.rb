@@ -64,9 +64,9 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       text = items1.sample["link"]
 
       puts "term = '#{$1}' items - #{items.size}"
+      respond_with :message, text: text
       rescue
       end
-      respond_with :message, text: text
     when /спали/
       porn_list = porn
       puts porn_list
