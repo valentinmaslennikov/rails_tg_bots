@@ -43,3 +43,7 @@ group :development do
 end
 
 gem 'telegram-bot'
+gem 'json'
+gem 'faraday'
+gem 'marky_markov'
+gem 'google_custom_search_api'

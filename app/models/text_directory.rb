@@ -1,0 +1,2 @@
+class TextDirectory < ApplicationRecord
+end

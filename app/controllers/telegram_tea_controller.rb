@@ -1,5 +1,5 @@
 
-class TelegramWebhookController < Telegram::Bot::UpdatesController
+class TelegramTeaController < Telegram::Bot::UpdatesController
   # use callbacks like in any other controllers
   # around_action :with_locale
 
