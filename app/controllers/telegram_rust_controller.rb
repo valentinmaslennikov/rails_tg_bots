@@ -29,7 +29,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       if prisoner.present? && message.text != ''
         #bot.api.delete_message(chat_id: message.chat.id, message_id: message.message_id)
         #bot.api.forwardMessage(chat_id: message.chat.id, from_chat_id: message.chat.id, message_id: message.message_id)
-        respond_with :message, text: "тов.#{prisoner.username} доложил что:\n\"#{message.text}\""
+        respond_with :message, text: "тов.#{prisoner.username} доложил что:\n\"#{message['text']}\""
         respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('riot').text)
         (prisoner.term - 1).eql?(0) ? prisoner.destroy : prisoner.update!(term: prisoner.term - 1)
         return
@@ -38,7 +38,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       puts e
       puts e.backtrace
     end
-    case message.text
+    case message['text']
     when /горшочек вари/
       chat.update!(enabled: true)
     when /горшочек не вари/
@@ -47,7 +47,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     end
     return nil unless chat.enabled?
     sleep(1)
-    case message.text&.downcase
+    case message['text']&.downcase
       #when /отправьте черный воронок за\s(\w*)/
       #when /верните в народ\s(\w*)/
     when /киберпанк/
