@@ -5,6 +5,12 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-TextDirectory.create!(name: 'stalker-bandits-set', text: File.open(Rails.root.join('public', 'stalker-bandits')).read)
-TextDirectory.create!(name: 'riot', text: File.open(Rails.root.join('public', 'riot')).read)
-TextDirectory.create!(name: 'lekis', text: File.open(Rails.root.join('public', 'lekis')).read)
+TextDirectory.find_or_create_by!(name: 'stalker-bandits-set') do |t|
+  t.text = File.open(Rails.root.join('public', 'stalker-bandits')).read
+end
+TextDirectory.find_or_create_by!(name: 'riot') do |t|
+  t.text = File.open(Rails.root.join('public', 'riot')).read
+end
+TextDirectory.find_or_create_by!(name: 'lekis') do |t|
+  t.text = File.open(Rails.root.join('public', 'lekis')).read
+end
