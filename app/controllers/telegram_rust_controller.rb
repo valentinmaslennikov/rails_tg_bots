@@ -23,9 +23,9 @@ class TelegramRustController < Telegram::Bot::UpdatesController
 
   def message(message)
     begin
-      chat = Chat.find_or_create_by(system_id: message['chat_id'])
+      chat = Chat.find_or_create_by(system_id: message['chat']['id'])
       #puts message.methods - Object.methods
-      prisoner = Prisoner.find_by_username(from['username'])
+      prisoner = Prisoner.find_by_username(message['from']['username'])
       if prisoner.present? && message['text'] != ''
         #bot.api.delete_message(chat_id: message.chat.id, message_id: message.message_id)
         #bot.api.forwardMessage(chat_id: message.chat.id, from_chat_id: message.chat.id, message_id: message.message_id)
