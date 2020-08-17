@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 2020_08_17_070737) do
   enable_extension "plpgsql"
 
   create_table "chats", force: :cascade do |t|
-    t.integer "system_id"
+    t.bigint "system_id"
     t.boolean "enabled"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

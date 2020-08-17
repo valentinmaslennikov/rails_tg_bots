@@ -56,6 +56,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       Prisoner.create(username: $1, term: $2)
       respond_with :message, text: 'Братва, затаились. Белые идут...'
     when /фото\s(.*)/
+      begin
       items = GoogleCustomSearchApi.search($1, searchType: "image")
       items1 = items["items"]
       puts items
@@ -63,6 +64,8 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       text = items1.sample["link"]
 
       puts "term = '#{$1}' items - #{items.size}"
+      rescue
+      end
       respond_with :message, text: text
     when /спали/
       porn_list = porn
