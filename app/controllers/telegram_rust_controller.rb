@@ -21,14 +21,6 @@ class TelegramRustController < Telegram::Bot::UpdatesController
                     ГОЛАЯ\ МАРИНА ГОРи\ В\ АДУ ДИКО ДИЧАЙШЕ ДИМЕДРОЛЬНОЕ\ ПИВО
                     ДОРЕВОЛЮЦИОННЫЙ\ СТИЛЬ ДЬЯВОЛЬСКИЙ\ КОНТРАКТ ЕЛЬЦИН\ где\ мои\ ДЕНЬГИ?!)
 
-  @markov = MarkyMarkov::TemporaryDictionary.new
-  tolstoi = TextDirectory.find_by_name('riot').text
-  tolstoi = tolstoi.gsub(/\t|\d+|\(|\)|—|«|»/, '').
-      downcase.lstrip.
-      split(/\.|,|\?|!|\.\.\.|\n|-/).
-      reject{ |c| c.empty? }
-  tolstoi.map { |i| @markov.parse_string i }
-
   def message(message)
     begin
       chat = Chat.find_or_create_by(system_id: message.chat.id)
@@ -63,12 +55,6 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     when /\/punish\s(\w*)\s(\d)/
       Prisoner.create(username: $1, term: $2)
       respond_with :message, text: 'Братва, затаились. Белые идут...'
-    when /марк | предложений =/
-      count = message.text.scan(/\d+/).first.to_i
-      respond_with :message, text:  @markov.generate_n_sentences(count)
-    when /марк | слов =/
-      count = message.text.scan(/\d+/).first.to_i
-      respond_with :message, text:  @markov.generate_n_words(count)
     when /фото\s(.*)/
       items = GoogleCustomSearchApi.search($1, searchType: "image")
       items1 = items["items"]
