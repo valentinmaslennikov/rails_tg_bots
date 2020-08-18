@@ -118,8 +118,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def set_chat_id
-    puts chat
-    @chat = Chat.find_or_create_by(system_id: chat.id)
+    @chat = Chat.find_or_create_by(system_id: chat['id'])
   end
 
   def get_rand(size = 5)
