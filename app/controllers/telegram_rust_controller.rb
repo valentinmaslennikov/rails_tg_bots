@@ -43,19 +43,19 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     end
   end
 
-  def горшочек_вари!(**args)
+  def start!(**args)
     @chat.update!(enabled: true)
   end
 
-  def горшочек_не_вари!(**args)
+  def stop!(**args)
     @chat.update!(enabled: false)
   end
 
-  def киберпанк!(**args)
+  def cyberpunk!(**args)
     respond_with :message, text:  "осталось #{(DateTime.new(2020,11,19) - DateTime.now).to_i } дней"
   end
 
-  def видео!(**args)
+  def youtube!(**args)
     respond_with :message, text: "nic nie jest litością dla drogiej osoby #{youtube_link(args.to_s)}"
   end
 
