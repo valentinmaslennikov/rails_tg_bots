@@ -4,19 +4,21 @@ class TelegramRustController < Telegram::Bot::UpdatesController
 
   def start!(*args)
     @chat.update!(enabled: true)
-    respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('stalker-bandits-set').text)
+    #respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('stalker-bandits-set').text)
+    respond_with :message, text: 'Stated'
   end
 
   def stop!(*args)
+    respond_with :message, text: 'Stopped'
     @chat.update!(enabled: false)
   end
 
   def cyberpunk!(*args)
-    respond_with :message, text:  "осталось #{(DateTime.new(2020,11,19) - DateTime.now).to_i } дней"
+    respond_with :message, text:  "#{(DateTime.new(2020,11,19) - DateTime.now).to_i } days left"
   end
 
-  def youtube!(str = nil, straight = nil, *args)
-    respond_with :message, text: "nic nie jest litością dla drogiej osoby #{youtube_link(str, straight)}"
+  def youtube!(*args)
+    respond_with :message, text: youtube_link(args)
   end
 
   def porno!(*args)
@@ -35,7 +37,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       Prisoner.find_or_create_by!(username: name) do |t|
         t.term = term
       end
-      respond_with :message, text: 'Братва, затаились. Белые идут...'
+      respond_with :message, text: 'Ready to forward'
     end
   end
 
@@ -56,9 +58,9 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     begin
       prisoner = PrisonerRepo.find_by(username: from['username'])
       if prisoner.present? && message['text'] != ''
-        respond_with :message, text: "тов.#{prisoner.username} доложил что:\n\"#{message['text']}\""
+        respond_with :message, text: "#{prisoner.username}:\n\"#{message['text']}\""
         if (prisoner.term - 1).eql?(0)
-          respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('riot').text)
+          #respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('riot').text)
           prisoner.destroy
         else
           prisoner.update!(term: prisoner.term - 1)
@@ -92,13 +94,15 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     res.dig('videos').map { |i| i.dig('video', 'url') }
   end
 
-  def youtube_link(text = nil, straight = nil)
+  def youtube_link(args = nil)
     count = 50
+    straight = args.include?('straight')
+    text = (args - ['straight']).join(' ')
     random = text.nil? ? get_rand(3) : text
 
     urlData = "https://www.googleapis.com/youtube/v3/search?key=#{Rails.application.credentials[:YOUTUBE_API_TOKEN]}&maxResults=#{count}&part=snippet&type=video&q=#{random}"
     res = JSON.parse(Faraday.get(URI.escape(urlData)).body)
-    rand_video_id = straight.present? ? res['items'][0]['id']['videoId'] : res['items'].map { |i| i['id']['videoId'] }.sample
+    rand_video_id = straight ? res['items'][0]['id']['videoId'] : res['items'].map { |i| i['id']['videoId'] }.sample
     rand_video_id.present? ? "https://www.youtube.com/watch?v=#{rand_video_id}" : 'хуй соси, такого там нет'
   end
 
