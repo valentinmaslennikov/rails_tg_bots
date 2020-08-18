@@ -45,6 +45,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
 
   def start!(*args)
     @chat.update!(enabled: true)
+    respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('stalker-bandits-set').text)
   end
 
   def stop!(*args)
