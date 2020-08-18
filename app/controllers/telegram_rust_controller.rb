@@ -1,5 +1,5 @@
 
-class TelegramLenin70BotController < Telegram::Bot::UpdatesController
+class TelegramRustController < Telegram::Bot::UpdatesController
   before_action :set_chat_id
 
   VOVELS = %w(а о э и у ы е ё ю я)
