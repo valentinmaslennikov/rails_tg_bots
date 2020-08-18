@@ -100,7 +100,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
 
   def check_jail(message)
     begin
-      prisoner = PrisonerRepo.find_by(message['from']['username'])
+      prisoner = PrisonerRepo.find_by(username: message['from']['username'])
       if prisoner.present? && message['text'] != ''
         respond_with :message, text: "тов.#{prisoner.username} доложил что:\n\"#{message['text']}\""
         if (prisoner.term - 1).eql?(0)
