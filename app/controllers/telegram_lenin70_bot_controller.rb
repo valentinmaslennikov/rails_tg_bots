@@ -1,5 +1,5 @@
 
-class TelegramRustController < Telegram::Bot::UpdatesController
+class TelegramLenin70BotController < Telegram::Bot::UpdatesController
   before_action :set_chat_id
 
   VOVELS = %w(а о э и у ы е ё ю я)
@@ -80,7 +80,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     end
   end
 
-  def фото!(**args)
+  def photo!(**args)
     begin
       puts args
       args = args.to_s
