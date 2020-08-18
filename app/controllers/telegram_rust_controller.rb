@@ -43,23 +43,23 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     end
   end
 
-  def start!(**args)
+  def start!(*args)
     @chat.update!(enabled: true)
   end
 
-  def stop!(**args)
+  def stop!(*args)
     @chat.update!(enabled: false)
   end
 
-  def cyberpunk!(**args)
+  def cyberpunk!(*args)
     respond_with :message, text:  "осталось #{(DateTime.new(2020,11,19) - DateTime.now).to_i } дней"
   end
 
-  def youtube!(**args)
-    respond_with :message, text: "nic nie jest litością dla drogiej osoby #{youtube_link(args.to_s)}"
+  def youtube!(str = nil, straight = nil, *args)
+    respond_with :message, text: "nic nie jest litością dla drogiej osoby #{youtube_link(str, straight)}"
   end
 
-  def porno!(**args)
+  def porno!(*args)
     porn_list = porn
     puts porn_list
     porn_list.first(2).each do |p|
@@ -67,11 +67,11 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     end
   end
 
-  def mercy!(**args)
+  def mercy!(*args)
     Prisoner.destroy_all
   end
 
-  def punish!(name = nil, term = nil, **args)
+  def punish!(name = nil, term = nil, *args)
     if name.present? && term.present?
       Prisoner.find_or_create_by!(username: name) do |t|
         t.term = term
@@ -80,7 +80,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     end
   end
 
-  def photo!(**args)
+  def photo!(*args)
     begin
       puts args
       args = args.to_s
@@ -138,13 +138,13 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     res.dig('videos').map { |i| i.dig('video', 'url') }
   end
 
-  def youtube_link(text = nil)
+  def youtube_link(text = nil, straight = nil)
     count = 50
     random = text.nil? ? get_rand(3) : text
 
     urlData = "https://www.googleapis.com/youtube/v3/search?key=#{Rails.application.credentials[:YOUTUBE_API_TOKEN]}&maxResults=#{count}&part=snippet&type=video&q=#{random}"
     res = JSON.parse(Faraday.get(URI.escape(urlData)).body)
-    rand_video_id = text.match(/"/) ? res['items'][0]['id']['videoId'] : res['items'].map { |i| i['id']['videoId'] }.sample
+    rand_video_id = straight.present? ? res['items'][0]['id']['videoId'] : res['items'].map { |i| i['id']['videoId'] }.sample
     rand_video_id.present? ? "https://www.youtube.com/watch?v=#{rand_video_id}" : 'хуй соси, такого там нет'
   end
 
