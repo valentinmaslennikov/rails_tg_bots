@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   telegram_webhook TelegramTeaController, :tea_bot
-  telegram_webhook TelegramRustController, :rust
+  telegram_webhook TelegramRustController, :upgrade
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   root 'application#root'
 
