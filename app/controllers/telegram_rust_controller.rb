@@ -30,8 +30,12 @@ class TelegramRustController < Telegram::Bot::UpdatesController
         #bot.api.delete_message(chat_id: message.chat.id, message_id: message.message_id)
         #bot.api.forwardMessage(chat_id: message.chat.id, from_chat_id: message.chat.id, message_id: message.message_id)
         respond_with :message, text: "тов.#{prisoner.username} доложил что:\n\"#{message['text']}\""
-        respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('riot').text)
-        (prisoner.term - 1).eql?(0) ? prisoner.destroy : prisoner.update!(term: prisoner.term - 1)
+        if (prisoner.term - 1).eql?(0)
+          respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('riot').text)
+          prisoner.destroy
+        else
+          prisoner.update!(term: prisoner.term - 1)
+        end
         return
       end
     rescue StandardError => e
