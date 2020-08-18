@@ -1,47 +1,6 @@
 
 class TelegramRustController < Telegram::Bot::UpdatesController
-  before_action :set_chat_id
-
-  VOVELS = %w(а о э и у ы е ё ю я)
-  HASH_TO_REPLACE = {'а' => 'я',
-                     'о' => 'ё',
-                     'э' => 'э',
-                     'и' => 'и',
-                     'у' => 'ю',
-                     'ы' => 'ы',
-                     'е' => 'е',
-                     'ё' => 'ё',
-                     'ю' => 'ю',
-                     'я' => 'я'}
-
-  PAUK_SENTENCES = %w(АД АДОВО АЦКИ Алё\ КАССА!
-                    АНАЛОГОВЫЙ\ ПРОДУКТ АЦКИЙ\ АБОРТ
-                    БАТЛ БАТОНЫ БЕЗАЛКОГОЛЬНАЯ\ ДИСКОТЕКА БЕЗ\ ДЕРЬМА
-                    БЕС\ противоречия БЛЯД БОЛТ БРИТОГОЛОВЫЕ\ ИДУТ БЫКОВАТЬ
-                    ВАСЮКИ ВОбЩЕМТА ТАЩЕМТА
-                    ВЕДЬМа\ из\ БЛЭР В\ ГОЛОВУ ГУРЗУФ ГИТЛЕР\ ШИШКИН
-                    ГОЛАЯ\ МАРИНА ГОРи\ В\ АДУ ДИКО ДИЧАЙШЕ ДИМЕДРОЛЬНОЕ\ ПИВО
-                    ДОРЕВОЛЮЦИОННЫЙ\ СТИЛЬ ДЬЯВОЛЬСКИЙ\ КОНТРАКТ ЕЛЬЦИН\ где\ мои\ ДЕНЬГИ?!)
-
-  def message(message)
-    check_jail(message)
-
-    return nil unless  @chat.enabled?
-    sleep(1)
-
-    begin
-        #case rand(2)
-        #bot.api.setChatPhoto(chat_id: -148142385, photo: Faraday::UploadIO.new('/home/loyalist/Изображения/70ed091ae52cca14dd9d437c9b8784a7.jpg', 'image/jpeg'))
-        #when 1
-        #bot.api.send_message(chat_id: message.chat.id, text: huz(message.text))
-        #else
-        #bot.api.send_message(chat_id: message.chat.id, text: PAUK_SENTENCES.map { |i| i.downcase }.sample)
-        #end
-        respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('stalker-bandits-set').text)
-    rescue
-        respond_with :message, text: 'ты там охуел чтоли сука?'
-    end
-  end
+  before_action :set_chat_id, :check_jail
 
   def start!(*args)
     @chat.update!(enabled: true)
@@ -62,7 +21,6 @@ class TelegramRustController < Telegram::Bot::UpdatesController
 
   def porno!(*args)
     porn_list = porn
-    puts porn_list
     porn_list.first(2).each do |p|
       respond_with :message, text: p
     end
@@ -83,15 +41,10 @@ class TelegramRustController < Telegram::Bot::UpdatesController
 
   def photo!(*args)
     begin
-      puts args
       args = args.to_s
       items = GoogleCustomSearchApi.search(args.to_s, searchType: "image")
       items1 = items["items"]
-      puts items
-      puts items1
       text = items1.sample["link"]
-
-      puts "term = '#{args}' items - #{items.size}"
       respond_with :message, text: text
     rescue
     end
@@ -156,7 +109,6 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   def huz(message)
     last_word = message.gsub(/[^\p{L}\s\d]/, '-').scan(/[а-яА-Я]+$/)[0].split('')
     pre = last_word.each_with_object([]) { |i, acc| VOVELS.include?(i) ? (acc << i; break acc) : acc << i }.join()
-    puts "pre = #{pre}"
 
     new_pre = pre.gsub(/#{VOVELS}$/, HASH_TO_REPLACE).scan(/#{VOVELS}/).join().prepend('ху')
     return 'ты че сука, выебываешься?' if last_word.join().eql?(pre)
