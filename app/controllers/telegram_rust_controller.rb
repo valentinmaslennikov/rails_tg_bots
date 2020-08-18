@@ -105,6 +105,10 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     end
   end
 
+  def mercy!(*)
+    Prisoner.destroy_all
+  end
+
   def punish!(name = nil, term = nil, *)
     if name.present? && term.present?
       Prisoner.find_or_create_by!(username: name) do |t|
