@@ -52,9 +52,6 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       #when /верните в народ\s(\w*)/
     when /киберпанк/
       respond_with :message, text:  "осталось #{(DateTime.new(2020,11,19) - DateTime.now).to_i } дней"
-    when /\/punish\s(\w*)\s(\d)/
-      Prisoner.create(username: $1, term: $2)
-      respond_with :message, text: 'Братва, затаились. Белые идут...'
     when /фото\s(.*)/
       begin
       items = GoogleCustomSearchApi.search($1, searchType: "image")
@@ -101,6 +98,15 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       rescue
         respond_with :message, text: 'ты там охуел чтоли сука?'
       end
+    end
+  end
+
+  def punish(name = nil, term = nil, *)
+    if name.present? && term.present?
+      Prisoner.find_or_create_by!(username: name) do |t|
+        t.term = term
+      end
+      respond_with :message, text: 'Братва, затаились. Белые идут...'
     end
   end
 
