@@ -96,8 +96,8 @@ class TelegramRustController < Telegram::Bot::UpdatesController
 
   def youtube_link(args = nil)
     count = 50
-    straight = args.include?('straight')
-    text = (args - ['straight']).join(' ')
+    straight = args.include?('!')
+    text = (args - ['!']).join(' ')
     random = text.nil? ? get_rand(3) : text
 
     urlData = "https://www.googleapis.com/youtube/v3/search?key=#{Rails.application.credentials[:YOUTUBE_API_TOKEN]}&maxResults=#{count}&part=snippet&type=video&q=#{random}"
