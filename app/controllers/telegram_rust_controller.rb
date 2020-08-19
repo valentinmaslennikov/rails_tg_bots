@@ -55,9 +55,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   private
 
   def check_enabled
-    unless @chat.enabled?
-      return
-    end
+    throw(:abort) unless @chat.enabled?
   end
 
   def check_jail
