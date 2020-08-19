@@ -1,11 +1,11 @@
 
 class TelegramRustController < Telegram::Bot::UpdatesController
-  before_action :set_chat_id, :check_jail
+  before_action :set_chat_id, :check_jail, :check_enabled
 
   def start!(*args)
     @chat.update!(enabled: true)
     #respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('stalker-bandits-set').text)
-    respond_with :message, text: 'Stated'
+    respond_with :message, text: 'Started'
   end
 
   def stop!(*args)
@@ -53,6 +53,10 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   private
+
+  def check_enabled
+    return unless @chat.enabled?
+  end
 
   def check_jail
     begin
