@@ -1,6 +1,7 @@
 
 class TelegramRustController < Telegram::Bot::UpdatesController
-  before_action :set_chat_id, :check_jail, :check_enabled
+  before_action :set_chat_id, :check_jail
+  before_action :check_enabled, except: [:start!]
 
   def start!(*args)
     @chat.update!(enabled: true)
