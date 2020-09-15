@@ -110,6 +110,8 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     res = JSON.parse(Faraday.get(URI.escape(urlData)).body)
     rand_video_id = straight ? res['items'][0]['id']['videoId'] : res['items'].map { |i| i['id']['videoId'] }.sample
     rand_video_id.present? ? "https://www.youtube.com/watch?v=#{rand_video_id}" : 'хуй соси, такого там нет'
+  rescue Exception => e
+    e
   end
 
   def phrases_from_file text
