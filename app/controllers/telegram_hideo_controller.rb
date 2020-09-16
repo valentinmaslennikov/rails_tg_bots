@@ -9,7 +9,7 @@ class TelegramHideoController < Telegram::Bot::UpdatesController
     tweets.map do |i|
       if i.id > tw
         respond_with :message, text: i['text']
-        Tweet.create!(tweet_id: tweet['id'])
+        Tweet.create!(tweet_id: i['id'])
       end
     end
     respond_with :message, text: '何も新しい先輩'
