@@ -1,8 +1,15 @@
 
 class TelegramRustController < Telegram::Bot::UpdatesController
-  before_action :set_chat_id, :check_jail
+  before_action :set_chat_id, :check_jail, :he_goes_and_kills_us_all, :message
   before_action :check_enabled, except: [:start!]
 
+  PT = %w[I\ walked. I\ could\ do\ nothing\ but\ walk. And\ then,\ I\ saw\ me\ walking\ in\ front\ of\ myself.
+          But\ it\ wasn't\ really\ me. Watch\ out. The\ gap\ in\ the\ door...\ it's\ a\ separate\ reality.
+          The\ only\ me\ is\ me. Are\ you\ sure\ the\ only\ you\ is\ you? You've\ been\ chosen.
+          You\ got\ fired,\ so\ you\ drowned\ your\ sorrows\ in\ booze.
+          She\ had\ to\ get\ a\ part-time\ job\ working\ a\ grocery\ store\ cash\ register.
+          Only\ reason\ she\ could\ earn\ a\ wage\ at\ all\ is\ the\ manager\ liked\ how\ she\ looked\ in\ a\ skirt.
+          You\ remember,\ right? Exactly\ ten\ months\ back.]
   def start!(*args)
     @chat.update!(enabled: true)
     #respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('stalker-bandits-set').text)
@@ -10,11 +17,25 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def message(message)
+    if @chat.purge_mod?
+      bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
+      respond_with :message, text: PT.sample
+    end
     if from['username']!='loyalistscfa' && message['text'] && message['text'].match(/(\s+|^)[пПnрРp]?[3ЗзВBвПnпрРpPАaAаОoO0о]?[сСcCиИuUОoO0оАaAаыЫуУyтТT]?[Ппn][иИuUeEеЕ][зЗ3][ДдDd]\w*[\?\,\.\;\-]*|(\s+|^)[рРpPпПn]?[рРpPоОoO0аАaAзЗ3]?[оОoO0иИuUаАaAcCсСзЗ3тТTуУy]?[XxХх][уУy][йЙеЕeEeяЯ9юЮ]\w*[\?\,\.\;\-]*|(\s+|^)[бпПnБ6][лЛ][яЯ9]([дтДТDT]\w*)?[\?\,\.\;\-]*|(\s+|^)(([зЗоОoO03]?[вВнН]?[ыЫаА]?[аАaAтТT]?[ъЪ]?)|(\w+[оОOo0еЕeE]))?[еЕeEиИuUёЁ][бБ6пП]([аАaAиИuUуУy]\w*)?[\?\,\.\;\-]*/)
       bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
       Offence.create!(text: message['text'], username: message['from']['username'])
       respond_with :message, text: 'https://pngimg.com/uploads/denied/denied_PNG4.png'
     end
+  end
+
+  def i_will_be_coming_back!
+    if from['username']!='loyalistscfa'
+      @chat.update!(purge_mod: false)
+    end
+  end
+
+  def he_goes_and_kills_us_all!
+    @chat.update!(purge_mod: true)
   end
 
   def stop!(*args)
