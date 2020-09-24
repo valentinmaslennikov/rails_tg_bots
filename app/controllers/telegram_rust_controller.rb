@@ -58,7 +58,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def stop!(*args)
-    if from['username']!='loyalistscfa'
+    if from['username']=='loyalistscfa'
       respond_with :message, text: 'Stopped'
       @chat.update!(enabled: false)
     else
