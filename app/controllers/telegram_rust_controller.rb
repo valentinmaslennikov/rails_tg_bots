@@ -1,6 +1,6 @@
 
 class TelegramRustController < Telegram::Bot::UpdatesController
-  before_action :set_chat_id, :check_jail, :he_goes_and_kills_us_all, :message
+  before_action :set_chat_id, :check_jail
   before_action :check_enabled, except: [:start!]
 
   PT = %w[I\ walked. I\ could\ do\ nothing\ but\ walk. And\ then,\ I\ saw\ me\ walking\ in\ front\ of\ myself.
