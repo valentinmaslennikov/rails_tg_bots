@@ -9,7 +9,9 @@ class TelegramRustController < Telegram::Bot::UpdatesController
           You\ got\ fired,\ so\ you\ drowned\ your\ sorrows\ in\ booze.
           She\ had\ to\ get\ a\ part-time\ job\ working\ a\ grocery\ store\ cash\ register.
           Only\ reason\ she\ could\ earn\ a\ wage\ at\ all\ is\ the\ manager\ liked\ how\ she\ looked\ in\ a\ skirt.
-          You\ remember,\ right? Exactly\ ten\ months\ back.]
+          You\ remember,\ right? Exactly\ ten\ months\ back. 204863 Don't\ touch\ that\ dial\ now,\ we're\ just\ getting\ started.
+          You\ can't\ trust\ the\ tap\ water. Look\ behind\ you. I\ said,\ look\ behind\ you. There's\ a\ monster\ inside\ of\ me
+          After\ killing\ his\ family,\ the\ father\ hung\ himself\ with\ a\ garden\ hose\ they\ had\ in\ the\ garage.]
   def start!(*args)
     @chat.update!(enabled: true)
     #respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('stalker-bandits-set').text)
@@ -31,6 +33,8 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   def i_will_be_coming_back!
     if from['username']!='loyalistscfa'
       @chat.update!(purge_mod: false)
+    else
+      respond_with :message, text: PT.sample
     end
   end
 
@@ -39,8 +43,12 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def stop!(*args)
-    respond_with :message, text: 'Stopped'
-    @chat.update!(enabled: false)
+    if from['username']!='loyalistscfa'
+      respond_with :message, text: 'Stopped'
+      @chat.update!(enabled: false)
+    else
+      respond_with :message, text: 'Forgive me, Lisa'
+    end
   end
 
   def cyberpunk!(*args)
