@@ -31,7 +31,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def i_will_be_coming_back!
-    if from['username']!='loyalistscfa'
+    if from['username']=='loyalistscfa'
       @chat.update!(purge_mod: false)
     else
       respond_with :message, text: PT.sample
