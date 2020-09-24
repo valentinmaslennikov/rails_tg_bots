@@ -9,6 +9,15 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     respond_with :message, text: 'Started'
   end
 
+  def message(message)
+    if message.match(/(\s+|^)[пПnрРp]?[3ЗзВBвПnпрРpPАaAаОoO0о]?[сСcCиИuUОoO0оАaAаыЫуУyтТT]?[Ппn][иИuUeEеЕ][зЗ3][ДдDd]\w*[\?\,\.\;\-]*|(\s+|^)[рРpPпПn]?[рРpPоОoO0аАaAзЗ3]?[оОoO0иИuUаАaAcCсСзЗ3тТTуУy]?[XxХх][уУy][йЙеЕeEeяЯ9юЮ]\w*[\?\,\.\;\-]*|(\s+|^)[бпПnБ6][лЛ][яЯ9]([дтДТDT]\w*)?[\?\,\.\;\-]*|(\s+|^)(([зЗоОoO03]?[аАaAтТT]?[ъЪ]?)|(\w+[оОOo0еЕeE]))?[еЕeEиИuUёЁ][бБ6пП]([аАaAиИuUуУy]\w*)?[\?\,\.\;\-]*/)
+      puts message.from
+      puts message.from['username']
+      Offence.create!(text: message['text'], username: message.from['username'])
+      respond_with :message, text: 'https://pngimg.com/uploads/denied/denied_PNG4.png'
+    end
+  end
+
   def stop!(*args)
     respond_with :message, text: 'Stopped'
     @chat.update!(enabled: false)
