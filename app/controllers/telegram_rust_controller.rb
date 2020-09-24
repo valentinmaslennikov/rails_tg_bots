@@ -29,6 +29,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def message(message)
+    begin
     if @chat.purge_mod?
       bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
       respond_with :message, text: PT.sample
@@ -38,6 +39,9 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
       Offence.create!(text: message['text'], username: message['from']['username'])
       respond_with :message, text: 'https://pngimg.com/uploads/denied/denied_PNG4.png'
+    end
+    rescue Exception => e
+      puts e
     end
   end
 
