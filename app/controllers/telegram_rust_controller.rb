@@ -22,6 +22,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     if @chat.purge_mod?
       bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
       respond_with :message, text: PT.sample
+      return
     end
     if from['username']!='loyalistscfa' && message['text'] && message['text'].match(/(\s+|^)[пПnрРp]?[3ЗзВBвПnпрРpPАaAаОoO0о]?[сСcCиИuUОoO0оАaAаыЫуУyтТT]?[Ппn][иИuUeEеЕ][зЗ3][ДдDd]\w*[\?\,\.\;\-]*|(\s+|^)[рРpPпПn]?[рРpPоОoO0аАaAзЗ3]?[оОoO0иИuUаАaAcCсСзЗ3тТTуУy]?[XxХх][уУy][йЙеЕeEeяЯ9юЮ]\w*[\?\,\.\;\-]*|(\s+|^)[бпПnБ6][лЛ][яЯ9]([дтДТDT]\w*)?[\?\,\.\;\-]*|(\s+|^)(([зЗоОoO03]?[вВнН]?[ыЫаА]?[аАaAтТT]?[ъЪ]?)|(\w+[оОOo0еЕeE]))?[еЕeEиИuUёЁ][бБ6пП]([аАaAиИuUуУy]\w*)?[\?\,\.\;\-]*/)
       bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
