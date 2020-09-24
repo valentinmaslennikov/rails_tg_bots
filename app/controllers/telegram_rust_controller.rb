@@ -11,7 +11,17 @@ class TelegramRustController < Telegram::Bot::UpdatesController
           Only\ reason\ she\ could\ earn\ a\ wage\ at\ all\ is\ the\ manager\ liked\ how\ she\ looked\ in\ a\ skirt.
           You\ remember,\ right? Exactly\ ten\ months\ back. 204863 Don't\ touch\ that\ dial\ now,\ we're\ just\ getting\ started.
           You\ can't\ trust\ the\ tap\ water. Look\ behind\ you. I\ said,\ look\ behind\ you. There's\ a\ monster\ inside\ of\ me
-          After\ killing\ his\ family,\ the\ father\ hung\ himself\ with\ a\ garden\ hose\ they\ had\ in\ the\ garage.]
+          After\ killing\ his\ family,\ the\ father\ hung\ himself\ with\ a\ garden\ hose\ they\ had\ in\ the\ garage.
+          Close\ your\ eyes. Let\ your\ ears\ listen\ to\ the\ radio. Do\ you\ hear\ my\ voice?
+          Can\ you\ hear\ your\ own\ soul's\ scream? Let\ us\ choose. My\ voice\ that\ tells\ the\ future.
+          Or\ your\ tortured\ mind. Well,\ what\ do\ you\ choose? You\ can\ choose. Your\ life,\ your\ future.
+          Wise\ as\ you\ are\ you\ might\ already\ have\ discovered\ it.
+          Yes,\ the\ radio\ drama\ from\ 75\ years\ ago\ was\ true.
+          They\ are\ here\ on\ our\ earth\ and\ they\ monitor\ and\ see\ all. Don't\ trust\ anyone.
+          Don't\ trust\ the\ police. They\ are\ already\ controlled\ by\ them.
+          That's\ the\ way\ it\ has\ been\ for\ 75\ years\ now. Only\ our\ best\ will\ prevail. You\ have\ a\ right.
+          A\ right\ to\ become\ one\ of\ us. So,\ welcome\ to\ our\ world. Very\ soon\ the\ gates\ to\ a\ new\ dimension\ will\ open.
+          204863.]
   def start!(*args)
     @chat.update!(enabled: true)
     #respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('stalker-bandits-set').text)
