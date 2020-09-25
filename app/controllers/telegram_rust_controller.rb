@@ -35,7 +35,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       respond_with :message, text: PT.sample
       return
     end
-    if from['username']!='loyalistscfa' && message['text'] && message['text'].match(/(пид[оа]р|сука|сучара|бля[тд]ь|[хx]уй|[хx]у[ёе]|[хx]ул[ие]|пизд|за[её]ба|[её]ба[нт]|хуи[лщ][ае]|[у́́́́́е́])/)
+    if from['username']!='loyalistscfa' && message['text'] && message['text'].match(/(пид[оа]р|сука|сучара|бля[тд]?ь?|[хx]уй|[хx]у[ёе]|[хx]ул[ие]|пизд|за[её]ба|[её]ба[нт]|хуи[лщ][ае]|[у́́́́́е́])/i)
       bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
       Offence.create!(text: message['text'], username: message['from']['username'])
       respond_with :message, text: 'https://pngimg.com/uploads/denied/denied_PNG4.png'
