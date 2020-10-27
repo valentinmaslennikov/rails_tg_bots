@@ -71,7 +71,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def cyberpunk!(*args)
-    respond_with :message, text:  "#{(DateTime.new(2020,11,19) - DateTime.now).to_i } days left"
+    respond_with :message, text:  "#{(DateTime.new(2020,12,10) - DateTime.now).to_i } days left"
   end
 
   def youtube!(*args)
