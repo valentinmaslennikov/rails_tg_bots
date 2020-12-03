@@ -68,6 +68,9 @@ GEM
     crass (1.0.6)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
+    dotiw (5.2.0)
+      activesupport
+      i18n
     equalizer (0.0.11)
     erubi (1.9.0)
     faraday (1.0.1)
@@ -237,6 +240,7 @@ PLATFORMS
 DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
+  dotiw
   faraday
   google_custom_search_api
   jbuilder (~> 2.7)

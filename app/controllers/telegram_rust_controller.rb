@@ -1,7 +1,12 @@
 
 class TelegramRustController < Telegram::Bot::UpdatesController
+  include ActionView::Helpers::DateHelper
+  include ActionView::Helpers::TextHelper
+  include ActionView::Helpers::NumberHelper
+
   before_action :set_chat_id, :check_jail, :set_current_user
   before_action :check_enabled, except: [:start!]
+  before_action :check_banned, except: :message
 
   PT = %w[I\ walked. I\ could\ do\ nothing\ but\ walk. And\ then,\ I\ saw\ me\ walking\ in\ front\ of\ myself.
           But\ it\ wasn't\ really\ me. Watch\ out. The\ gap\ in\ the\ door...\ it's\ a\ separate\ reality.
@@ -35,7 +40,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       respond_with :message, text: PT.sample
       return
     end
-    if from['username']!='loyalistscfa' && message['text'] && message['text'].match(/(пид[оа]р|сука|сучара|бля[тд]?ь?|[хx]уй|[хx]у[ёе]|[хx]ул[ие]|пизд|за[её]ба|[её]ба[нт]|хуи[лщ][ае]|хyй)/i)
+    if @user.username!='loyalistscfa' && message['text'] && message['text'].match(/(пид[оа]р|сука|сучара|бля[тд]?ь?|[хx]уй|[хx]у[ёе]|[хx]ул[ие]|пизд|за[её]ба|[её]ба[нт]|хуи[лщ][ае]|хyй)/i)
       bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
       Offence.create!(text: message['text'], username: message['from']['username'])
       respond_with :message, text: 'https://fathomless-beach-05289.herokuapp.com/leha228.jpg'
@@ -46,7 +51,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def i_will_be_coming_back!
-    if from['username']=='loyalistscfa'
+    if @user.username.eql?('loyalistscfa')
       @chat.update!(purge_mod: false)
     else
       respond_with :message, text: PT.sample
@@ -71,7 +76,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
 
   def stop!(*args)
     if @chat.purge_mod?
-      if from['username']=='loyalistscfa'
+      if @user.username.eql?('loyalistscfa')
       respond_with :message, text: 'Stopped'
       @chat.update!(enabled: false)
       else
@@ -83,7 +88,15 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def cyberpunk!(*args)
-    respond_with :message, text:  "#{(DateTime.new(2020,12,10) - DateTime.now).to_i } days left"
+    dist = distance_of_time_in_words_to_now(Time.new(2020,12,10,5), include_seconds: true)
+    if args[0].eql?('hours')
+      dist = distance_of_time_in_words_to_now(Time.new(2020,12,10,5), include_seconds: true, accumulate_on: :hours)
+    elsif args[0].eql?('seconds')
+      dist = distance_of_time_in_words_to_now(Time.new(2020,12,10,5), include_seconds: true, accumulate_on: :seconds)
+    elsif args[0].eql?('minutes')
+      dist = distance_of_time_in_words_to_now(Time.new(2020,12,10,5), include_seconds: true, accumulate_on: :minutes)
+    end
+    respond_with :message, text:  "#{dist} left"
   end
 
   def youtube!(*args)
@@ -123,6 +136,10 @@ class TelegramRustController < Telegram::Bot::UpdatesController
 
   private
 
+  def check_banned
+    throw(:abort) if @user.banned?
+  end
+  
   def check_enabled
     throw(:abort) unless @chat.enabled?
   end
@@ -130,7 +147,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   def check_jail
     begin
       message = self.payload
-      prisoner = PrisonerRepo.find_by(username: from['username'])
+      prisoner = PrisonerRepo.find_by(username: @user.username)
       if prisoner.present? && message['text'] != ''
         respond_with :message, text: "#{prisoner.username}:\n\"#{message['text']}\""
         if (prisoner.term - 1).eql?(0)
@@ -154,8 +171,6 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       user.username = from['username']
       user.chat = @chat
     end
-
-    throw(:abort) if @user.banned?
   end
 
   def set_chat_id
