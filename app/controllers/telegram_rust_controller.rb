@@ -1,6 +1,6 @@
 
 class TelegramRustController < Telegram::Bot::UpdatesController
-  before_action :set_chat_id, :check_jail
+  before_action :set_chat_id, :check_jail, :set_current_user
   before_action :check_enabled, except: [:start!]
 
   PT = %w[I\ walked. I\ could\ do\ nothing\ but\ walk. And\ then,\ I\ saw\ me\ walking\ in\ front\ of\ myself.
@@ -50,6 +50,18 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       @chat.update!(purge_mod: false)
     else
       respond_with :message, text: PT.sample
+    end
+  end
+
+  def ban!(*args)
+    if @user.username.eql?('loyalistscfa')
+      User.find_by_username(args.to_s).update!(banned: true)
+    end
+  end
+
+  def unban!(*args)
+    if @user.username.eql?('loyalistscfa')
+      User.find_by_username(args.to_s).update!(banned: false)
     end
   end
 
@@ -133,6 +145,17 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       puts e
       puts e.backtrace
     end
+  end
+
+  def set_current_user
+    @user = User.find_or_create_by(telegram_id: from['id']) do |user|
+      user.first_name = from['first_name']
+      user.last_name = from['last_name']
+      user.username = from['username']
+      user.chat = @chat
+    end
+
+    throw(:abort) if @user.banned?
   end
 
   def set_chat_id
