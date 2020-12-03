@@ -55,13 +55,13 @@ class TelegramRustController < Telegram::Bot::UpdatesController
 
   def ban!(*args)
     if @user.username.eql?('loyalistscfa')
-      User.find_by_username(args.to_s).update!(banned: true)
+      User.find_by_username(args.first.to_s).update!(banned: true)
     end
   end
 
   def unban!(*args)
     if @user.username.eql?('loyalistscfa')
-      User.find_by_username(args.to_s).update!(banned: false)
+      User.find_by_username(args.first.to_s).update!(banned: false)
     end
   end
 
