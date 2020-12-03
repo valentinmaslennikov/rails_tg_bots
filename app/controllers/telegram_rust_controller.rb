@@ -88,13 +88,13 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def cyberpunk!(*args)
-    dist = distance_of_time_in_words_to_now(Time.new(2020,12,10,5), include_seconds: true)
+    dist = distance_of_time_in_words_to_now(Time.new(2020,12,10,5,0,0,Time.zone), include_seconds: true)
     if args[0].eql?('hours')
-      dist = distance_of_time_in_words_to_now(Time.new(2020,12,10,5), include_seconds: true, accumulate_on: :hours)
+      dist = distance_of_time_in_words_to_now(Time.new(2020,12,10,5,0,0,Time.zone), include_seconds: true, accumulate_on: :hours)
     elsif args[0].eql?('seconds')
-      dist = distance_of_time_in_words_to_now(Time.new(2020,12,10,5), include_seconds: true, accumulate_on: :seconds)
+      dist = distance_of_time_in_words_to_now(Time.new(2020,12,10,5,0,0,Time.zone), include_seconds: true, accumulate_on: :seconds)
     elsif args[0].eql?('minutes')
-      dist = distance_of_time_in_words_to_now(Time.new(2020,12,10,5), include_seconds: true, accumulate_on: :minutes)
+      dist = distance_of_time_in_words_to_now(Time.new(2020,12,10,5,0,0,Time.zone), include_seconds: true, accumulate_on: :minutes)
     end
     respond_with :message, text:  "#{dist} left"
   end
@@ -139,7 +139,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   def check_banned
     throw(:abort) if @user.banned?
   end
-  
+
   def check_enabled
     throw(:abort) unless @chat.enabled?
   end
