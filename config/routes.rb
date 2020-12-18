@@ -6,4 +6,5 @@ Rails.application.routes.draw do
   root 'application#root'
 
   resources :tea_reviews
+  resources :offences
 end
