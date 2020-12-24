@@ -7,8 +7,8 @@ class Checker::Ps5Checker < BaseService
     @params = params
   end
 
-  LINKS_DIGITAL = %w(https://www.mvideo.ru/products/igrovaya-konsol-sony-playstation-5-40073270?cityId=CityCZ_2030 https://www.mvideo.ru/products/igrovaya-konsol-sony-playstation-5-digital-edition-40074203?cityId=CityCZ_2030)
-  LINKS_DISK    = %w(https://www.mvideo.ru/products/igrovaya-konsol-sony-playstation-5-40073270?cityId=CityCZ_2030 https://www.mvideo.ru/products/igrovaya-konsol-sony-playstation-5-digital-edition-40074203?cityId=CityCZ_2030)
+  LINKS_DIGITAL = %w(https://www.mvideo.ru/products/igrovaya-konsol-sony-playstation-5-digital-edition-40074203?cityId=CityCZ_2030)
+  LINKS_DISK    = %w(https://www.mvideo.ru/products/igrovaya-konsol-sony-playstation-5-40073270?cityId=CityCZ_2030)
 
   def call
     LINKS_DIGITAL.map do |link|
@@ -21,8 +21,6 @@ class Checker::Ps5Checker < BaseService
       response = Faraday.get(link)
       unless response.body.force_encoding(Encoding::UTF_8) =~ /Товар распродан/
         Chat.pluck(:system_id).map { |i| Telegram.bots[:upgrade].send_message(chat_id: i, text: "Дисковая версия пс5 доступна для покупки #{link}") }
-      else
-        Chat.pluck(:system_id).map { |i| Telegram.bots[:upgrade].send_message(chat_id: i, text: "Дисковая версия пс5 недоступна для покупки #{link}") }
       end
     end
   end
