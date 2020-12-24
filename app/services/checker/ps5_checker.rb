@@ -11,16 +11,17 @@ class Checker::Ps5Checker < BaseService
   LINKS_DISK    = %w(https://www.mvideo.ru/products/igrovaya-konsol-sony-playstation-5-40073270?cityId=CityCZ_2030)
 
   def call
+    system_ids = Chat.pluck(:system_id)
     LINKS_DIGITAL.map do |link|
       response = Faraday.get(link)
       unless response.body.force_encoding(Encoding::UTF_8) =~ /Товар распродан/
-        Chat.pluck(:system_id).map { |i| Telegram.bots[:upgrade].send_message(chat_id: i, text: "Цифровая версия пс5 доступна для покупки #{link}") }
+        system_ids.map { |i| Telegram.bots[:upgrade].send_message(chat_id: i, text: "Цифровая версия пс5 доступна для покупки #{link}") }
       end
     end
     LINKS_DISK.map do |link|
       response = Faraday.get(link)
       unless response.body.force_encoding(Encoding::UTF_8) =~ /Товар распродан/
-        Chat.pluck(:system_id).map { |i| Telegram.bots[:upgrade].send_message(chat_id: i, text: "Дисковая версия пс5 доступна для покупки #{link}") }
+        system_ids.map { |i| Telegram.bots[:upgrade].send_message(chat_id: i, text: "Дисковая версия пс5 доступна для покупки #{link}") }
       end
     end
   end
