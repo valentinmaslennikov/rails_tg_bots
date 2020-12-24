@@ -14,15 +14,15 @@ class Checker::Ps5Checker < BaseService
     LINKS_DIGITAL.map do |link|
       response = Faraday.get(link)
       unless response.body.force_encoding(Encoding::UTF_8) =~ /Товар распродан/
-        @chat.pluck(:system_id).map { |i| Telegram.bots[:upgrade].send_message(chat_id: i, text: "Цифровая версия пс5 доступна для покупки #{link}") }
+        Chat.pluck(:system_id).map { |i| Telegram.bots[:upgrade].send_message(chat_id: i, text: "Цифровая версия пс5 доступна для покупки #{link}") }
       end
     end
     LINKS_DISK.map do |link|
       response = Faraday.get(link)
       unless response.body.force_encoding(Encoding::UTF_8) =~ /Товар распродан/
-        @chat.pluck(:system_id).map { |i| Telegram.bots[:upgrade].send_message(chat_id: i, text: "Дисковая версия пс5 доступна для покупки #{link}") }
+        Chat.pluck(:system_id).map { |i| Telegram.bots[:upgrade].send_message(chat_id: i, text: "Дисковая версия пс5 доступна для покупки #{link}") }
       else
-        @chat.pluck(:system_id).map { |i| Telegram.bots[:upgrade].send_message(chat_id: i, text: "Дисковая версия пс5 недоступна для покупки #{link}") }
+        Chat.pluck(:system_id).map { |i| Telegram.bots[:upgrade].send_message(chat_id: i, text: "Дисковая версия пс5 недоступна для покупки #{link}") }
       end
     end
   end
