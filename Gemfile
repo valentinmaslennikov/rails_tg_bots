@@ -43,6 +43,7 @@ group :development do
 end
 gem 'dotiw'
 
+gem 'twilio-ruby', '~> 5.45.1'
 gem 'telegram-bot'
 gem 'json'
 gem 'faraday'
