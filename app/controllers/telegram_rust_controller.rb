@@ -40,10 +40,10 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       respond_with :message, text: PT.sample
       return
     end
-    if false#@user.username!='loyalistscfa' && message['text'] && message['text'].match(/(пид[оа]р|сука|сучара|бля[тд]?ь?|[хx]уй|[хx]у[ёе]|[хx]ул[ие]|пизд|за[её]ба|[её]ба[нт]|хуи[лщ][ае]|хyй)/i)
+    if @user.username!='loyalistscfa' && message['text'] && message['text'].match(/(пид[оа]р|сука|сучара|бля[тд]?ь?|[хx]уй|[хx]у[ёе]|[хx]ул[ие]|пизд|за[её]ба|[её]ба[нт]|хуи[лщ][ае]|хyй)/i)
       bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
       Offence.create!(text: message['text'], username: message['from']['username'])
-      respond_with :message, text: 'https://fathomless-beach-05289.herokuapp.com/leha228.jpg'
+      respond_with :message, text: 'https://fathomless-beach-05289.herokuapp.com/pp.jpg'
     end
     rescue Exception => e
       puts e
