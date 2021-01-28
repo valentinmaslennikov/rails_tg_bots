@@ -45,6 +45,9 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       Offence.create!(text: message['text'], username: message['from']['username'])
       respond_with :message, text: 'https://fathomless-beach-05289.herokuapp.com/pp.jpg'
     end
+    if message['text'].match(/навальный/i)
+      reply_with :photo, photo: File.open('inog.jpg')
+    end
     rescue Exception => e
       puts e
     end
