@@ -46,7 +46,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       respond_with :message, text: 'https://fathomless-beach-05289.herokuapp.com/pp.jpg'
     end
     if message['text'].match(/навальн/i)
-      reply_with :photo, photo: File.open('public/inog.jpg')
+      edit_message :message, text: 'test1'
     end
     rescue Exception => e
       puts e
