@@ -29,7 +29,7 @@ class SunshineController < Telegram::Bot::UpdatesController
       respond_with(chat_id: chat['id'], sticker: get_url('sticker_ids'))
     end
 
-    bot.api.send_message(chat_id: chat['id'], text: translated_text.capitalize)
+    respond_with(chat_id: chat['id'], text: translated_text.capitalize)
   end
 
   def stop!(*args)
