@@ -10,6 +10,7 @@ class SunshineController < Telegram::Bot::UpdatesController
   end
 
   def message(message)
+    return unless @user.username.eql?('zah_ai')
     bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
 
     if !message.text.nil? && message['text'].include?('http') || !message['video'].nil?
