@@ -7,6 +7,9 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   before_action :set_chat_id, :check_jail, :set_current_user
   before_action :check_enabled, except: [:start!]
   before_action :check_banned, except: :message
+  before_action :create_chat_bot_record
+
+  BOT_NAME = 'rust'
 
   PT = %w[I\ walked. I\ could\ do\ nothing\ but\ walk. And\ then,\ I\ saw\ me\ walking\ in\ front\ of\ myself.
           But\ it\ wasn't\ really\ me. Watch\ out. The\ gap\ in\ the\ door...\ it's\ a\ separate\ reality.
@@ -28,7 +31,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
           A\ right\ to\ become\ one\ of\ us. So,\ welcome\ to\ our\ world. Very\ soon\ the\ gates\ to\ a\ new\ dimension\ will\ open.
           204863.]
   def start!(*args)
-    @chat.update!(enabled: true)
+    @chat_bot.update!(enabled: false)
     #respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('stalker-bandits-set').text)
     respond_with :message, text: 'Started'
   end
@@ -81,12 +84,12 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     if @chat.purge_mod?
       if @user.username.eql?('loyalistscfa')
       respond_with :message, text: 'Stopped'
-      @chat.update!(enabled: false)
+      @chat_bot.update!(enabled: false)
       else
       respond_with :message, text: 'Forgive me, Lisa'
       end
     else
-      @chat.update!(enabled: false)
+      @chat_bot.update!(enabled: false)
     end
   end
 
@@ -144,7 +147,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def check_enabled
-    throw(:abort) unless @chat.enabled?
+    throw(:abort) unless @chat_bot.enabled?
   end
 
   def check_jail
@@ -222,5 +225,11 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     new_pre = pre.gsub(/#{VOVELS}$/, HASH_TO_REPLACE).scan(/#{VOVELS}/).join().prepend('ху')
     return 'ты че сука, выебываешься?' if last_word.join().eql?(pre)
     last_word.join().gsub(/^#{pre}/, new_pre)
+  end
+
+  def create_chat_bot_record
+    @chat_bot = @chat.bots.find_or_create_by!(name: BOT_NAME) do |t|
+      t.enabled = true
+    end
   end
 end

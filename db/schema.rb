@@ -10,14 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_03_140310) do
+ActiveRecord::Schema.define(version: 2021_01_30_081723) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "bots", force: :cascade do |t|
+    t.string "name"
+    t.boolean "enabled"
+    t.bigint "chat_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["chat_id"], name: "index_bots_on_chat_id"
+  end
+
   create_table "chats", force: :cascade do |t|
     t.bigint "system_id"
-    t.boolean "enabled"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "purge_mod"
