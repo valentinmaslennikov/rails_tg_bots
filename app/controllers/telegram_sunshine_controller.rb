@@ -16,7 +16,7 @@ class TelegramSunshineController < Telegram::Bot::UpdatesController
   def message(message)
     return unless @user.username.eql?('loyalistscfa')
     bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
-	ChatLogger.send_generic_log(bot, message)
+    ChatLogger.send_generic_log(bot, message)
     
     if !message.text.nil? && message['text'].include?('http') || !message['video'].nil?
       respond_with(chat_id: chat['id'], text: get_url('ambient_urls'))
