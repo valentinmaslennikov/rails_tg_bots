@@ -65,7 +65,6 @@ module TranslateProvider
                       "https://media.istockphoto.com/photos/wild-horses-on-a-sunny-meadow-in-the-mountains-of-kyrgyzstan-picture-id867222128?k=6&m=867222128&s=170667a&w=0&h=Yjp0TTg9qpSXWr6pHSTIuDOjM_3J_Apy0XMW-llHYPc=",
                       "https://i.pinimg.com/originals/86/c8/37/86c837c764664315584ee0f1e444e22e.jpg",
                       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4mUk1P0BMuDzJ80iGyxSQpo8d3Z6vZdLgYg&usqp=CAU",
-                      "https://lh3.googleusercontent.com/proxy/NKBgNqZVeIX4csHMJQg2ZqehPVuJd36FgHVc9q0BpS4VV7_0izb6uZGDHybfjkQcLuGhF3kE35c7n52Br4aCOvAY_bvU1NnlHKAAxHwL2ah4nVMatEfaz_yUHQl212851uFCcwGMFcU6AGjYsMvNhqkUVwDnokM_NikXn9zk0q1cUjpp",
                       "https://www.zooplus.it/magazine/wp-content/uploads/2020/07/katze-liegt-im-gras-sommer-768x512.jpeg"
                     ],
     "audio_urls":   [
