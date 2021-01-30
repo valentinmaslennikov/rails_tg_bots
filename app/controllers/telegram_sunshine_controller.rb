@@ -20,7 +20,7 @@ class TelegramSunshineController < Telegram::Bot::UpdatesController
       respond_with(chat_id: chat['id'], text: get_url('ambient_urls'))
     end
 
-    if !message['photo'].nil? && message['photo'].length > 0
+    if !message['photo'].blank?
       respond_with(chat_id: chat['id'], text: get_url('photo_urls'))
     end
 
