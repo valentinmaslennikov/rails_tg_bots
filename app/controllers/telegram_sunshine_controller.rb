@@ -1,7 +1,7 @@
 class TelegramSunshineController < Telegram::Bot::UpdatesController
   include TranslateProvider
   include Telegram::Bot::UpdatesController::TypedUpdate
-  extend ChatLogger
+  include ChatLogger
 
   before_action :set_chat_id, :set_current_user
   before_action :create_chat_bot_record
@@ -16,7 +16,7 @@ class TelegramSunshineController < Telegram::Bot::UpdatesController
   def message(message)
     return unless @user.username.eql?('loyalistscfa')
     bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
-    ChatLogger.send_generic_log(bot, message)
+    #send_generic_log(chat, message)
     
     if !message.text.nil? && message['text'].include?('http') || !message['video'].nil?
       respond_with(chat_id: chat['id'], text: get_url('ambient_urls'))
