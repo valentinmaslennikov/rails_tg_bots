@@ -231,6 +231,6 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       t.enabled = true
     end
     puts '///////////////////////////'
-    puts @chat_bot
+    puts @chat_bot.attributes
   end
 end
