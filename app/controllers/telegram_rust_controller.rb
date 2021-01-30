@@ -4,7 +4,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::NumberHelper
 
-  before_action :set_chat_id, :create_chat_bot_record,:check_jail, :set_current_user
+  before_action :set_chat_id, :create_chat_bot_record, :set_current_user
   before_action :check_enabled, except: [:start!]
   before_action :check_banned, except: :message
 
@@ -141,7 +141,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
 
   private
 
-  def chec_banned
+  def check_banned
     throw(:abort) if @user.banned?
   end
 
