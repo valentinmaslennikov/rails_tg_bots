@@ -30,7 +30,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
           A\ right\ to\ become\ one\ of\ us. So,\ welcome\ to\ our\ world. Very\ soon\ the\ gates\ to\ a\ new\ dimension\ will\ open.
           204863.]
   def start!(*args)
-    @chat_bot.update!(enabled: false)
+    @chat_bot.update!(enabled: true)
     #respond_with :message, text: phrases_from_file(TextDirectory.find_by_name('stalker-bandits-set').text)
     respond_with :message, text: 'Started'
   end
