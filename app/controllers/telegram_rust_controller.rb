@@ -141,7 +141,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
 
   private
 
-  def check_banned
+  def chec_banned
     throw(:abort) if @user.banned?
   end
 
@@ -230,5 +230,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     @chat_bot = @chat.bots.find_or_create_by!(name: BOT_NAME) do |t|
       t.enabled = true
     end
+    puts '///////////////////////////'
+    puts @chat_bot
   end
 end
