@@ -35,6 +35,8 @@ class TelegramSunshineController < Telegram::Bot::UpdatesController
     end
 
     respond_with(chat_id: chat['id'], text: translated_text.capitalize)
+  rescue Exception => e
+    puts e
   end
 
   def stop!(*args)
