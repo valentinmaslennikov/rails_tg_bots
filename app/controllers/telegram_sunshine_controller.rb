@@ -1,18 +1,21 @@
-class SunshineController < Telegram::Bot::UpdatesController
+class TelegramSunshineController < Telegram::Bot::UpdatesController
   include TranslateProvider
   include Telegram::Bot::UpdatesController::TypedUpdate
   extend ChatLogger
 
   before_action :set_chat_id, :set_current_user
+  before_action :create_chat_bot_record
+
+  BOT_NAME = 'sunshine'
 
   def start!(*args)
-    @chat.update!(enabled: true)
-      respond_with :message, text: 'Enabled'
+    @chat_bot.update!(enabled: true)
+    respond_with :message, text: 'Enabled'
   end
 
   def message(message)
-    return unless @user.username.eql?('zah_ai')
-	bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
+    return unless @user.username.eql?('loyalistscfa')
+    bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
 	ChatLogger.send_generic_log(bot, message)
     
     if !message.text.nil? && message['text'].include?('http') || !message['video'].nil?
@@ -35,8 +38,8 @@ class SunshineController < Telegram::Bot::UpdatesController
   end
 
   def stop!(*args)
-      @chat.update!(enabled: false)
-      respond_with :message, text: 'Disabled'
+    @chat_bot.update!(enabled: false)
+    respond_with :message, text: 'Disabled'
   end
 
   private
@@ -52,6 +55,12 @@ class SunshineController < Telegram::Bot::UpdatesController
 
   def set_chat_id
     @chat = Chat.find_or_create_by(system_id: chat['id'])
+  end
+
+  def create_chat_bot_record
+    @chat_bot = @chat.bots.find_or_create_by!(name: BOT_NAME) do |t|
+      t.enabled = true
+    end
   end
 end
 
