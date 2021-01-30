@@ -3,8 +3,8 @@ class TelegramSunshineController < Telegram::Bot::UpdatesController
   include Telegram::Bot::UpdatesController::TypedUpdate
   include ChatLogger
 
-  before_action :set_chat_id, :set_current_user
-  before_action :create_chat_bot_record
+  before_action :set_chat_id, :set_current_user, :create_chat_bot_record
+  before_action :check_enabled, except: [:start!]
 
   BOT_NAME = 'sunshine'
 
@@ -63,6 +63,10 @@ class TelegramSunshineController < Telegram::Bot::UpdatesController
     @chat_bot = @chat.bots.find_or_create_by!(name: BOT_NAME) do |t|
       t.enabled = true
     end
+  end
+
+  def check_enabled
+    throw(:abort) unless @chat_bot.enabled?
   end
 end
 
