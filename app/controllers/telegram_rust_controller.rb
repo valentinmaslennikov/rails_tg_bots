@@ -230,7 +230,5 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     @chat_bot = @chat.bots.find_or_create_by!(name: BOT_NAME) do |t|
       t.enabled = true
     end
-    puts '///////////////////////////'
-    puts @chat_bot.attributes
   end
 end

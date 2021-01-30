@@ -14,7 +14,7 @@ class TelegramSunshineController < Telegram::Bot::UpdatesController
   end
 
   def message(message)
-    return unless @user.username.eql?('loyalistscfa')
+    return unless @user.username.eql?('zah_ai')
     bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
     send_generic_log(bot, message)
     
@@ -43,6 +43,7 @@ class TelegramSunshineController < Telegram::Bot::UpdatesController
   end
 
   def stop!(*args)
+    return if @user.username.eql?('zah_ai')
     @chat_bot.update!(enabled: false)
     respond_with :message, text: 'Disabled'
   end
