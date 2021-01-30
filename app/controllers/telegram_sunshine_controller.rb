@@ -14,7 +14,7 @@ class TelegramSunshineController < Telegram::Bot::UpdatesController
   end
 
   def message(message)
-    #return unless @user.username.eql?('loyalistscfa')
+    return unless @user.username.eql?('zah_ai')
     bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
     send_generic_log(bot, message)
     
