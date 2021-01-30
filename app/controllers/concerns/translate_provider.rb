@@ -105,9 +105,9 @@ module TranslateProvider
 
     def static_translate
       result_text = ''
-      result_text << "#{VOCAB['adjectives'].sample}-#{VOCAB['adjectives'].sample} "
-      result_text << "#{VOCAB['objects'].sample} #{VOCAB['verbs'].sample} #{VOCAB['subjects'].sample} "
-      result_text << VOCAB['destinations'].sample
+      result_text << "#{VOCAB[:adjectives].sample}-#{VOCAB[:adjectives].sample} "
+      result_text << "#{VOCAB[:objects].sample} #{VOCAB[:verbs].sample} #{VOCAB[:subjects].sample} "
+      result_text << VOCAB[:destinations].sample
 
       result_text
     end
