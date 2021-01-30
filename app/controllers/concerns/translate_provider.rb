@@ -92,10 +92,7 @@ module TranslateProvider
 
   included do
     def get_url url_type
-      puts '\\\\\\\\\\'
-      puts url_type
-      puts VOCAB[url_type]
-      VOCAB[url_type].sample
+      VOCAB[url_type.to_sym].sample
     end
 
     def translated_text
