@@ -92,8 +92,6 @@ module TranslateProvider
 
   included do
     def get_url url_type
-      puts '//////////get_url'
-      puts url_type
       VOCAB[url_type.to_sym].sample
     end
 

@@ -19,25 +19,24 @@ class TelegramSunshineController < Telegram::Bot::UpdatesController
     #send_generic_log(chat, message)
     
     if !message.text.nil? && message['text'].include?('http') || !message['video'].nil?
-      puts '//////////1'
       respond_with :message, text: get_url('ambient_urls')
+      return
     end
 
     unless message['photo'].blank?
-      puts '//////////2'
       respond_with :message, text: get_url('photo_urls')
+      return
     end
 
     if !message['voice'].nil? || !message['video_note'].nil?
-      puts '//////////3'
       respond_with :message, text: get_url('audio_urls')
+      return
     end
 
     unless message['sticker'].nil?
-      puts '//////////4'
-      respond_with :message, sticker: get_url('sticker_ids')
+      respond_with :sticker, sticker: get_url('sticker_ids')
+      return
     end
-    puts '//////////5'
     respond_with :message, text: translated_text.capitalize
   rescue Exception => e
     puts e
