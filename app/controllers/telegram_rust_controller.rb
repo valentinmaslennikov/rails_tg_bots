@@ -109,7 +109,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def porno!(*args)
-    porn_list = porn
+    porn_list = porn(args)
     porn_list.first(2).each do |p|
       respond_with :message, text: p
     end
@@ -187,14 +187,8 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     (0...size).map { charset.to_a[rand(charset.size)] }.join
   end
 
-  def redtube_tag
-    url = 'https://api.redtube.com/?data=redtube.Tags.getTagList&output=json'
-    res = JSON.parse(Faraday.get(URI.escape(url)).body)
-    res['tags'].sample.dig('tag', 'tag_name')
-  end
-
-  def porn
-    url = "https://api.redtube.com/?data=redtube.Videos.searchVideos&output=json&tags[]=#{redtube_tag}"
+  def porn(args)
+    url = "https://api.redtube.com/?data=redtube.Videos.searchVideos&output=json&search=#{args}"
     res = JSON.parse(Faraday.get(URI.escape(url)).body)
     res.dig('videos').map { |i| i.dig('video', 'url') }
   end
