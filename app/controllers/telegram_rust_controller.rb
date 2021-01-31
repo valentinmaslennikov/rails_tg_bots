@@ -109,9 +109,12 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def porno!(*args)
-    porn_list = porn(args)
-    porn_list.first(2).each do |p|
-      respond_with :message, text: p
+    porn_data = porn(args)
+    respond_with :message, text: porn_data if porn_data.instance_of? String
+    if porn_data.instance_of? Array
+      porn_data.sample(2).each do |p|
+        respond_with :message, text: p
+      end
     end
   end
 
@@ -188,8 +191,15 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   end
 
   def porn(args)
+    args = args.join(' ')
     url = "https://api.redtube.com/?data=redtube.Videos.searchVideos&output=json&search=#{args}"
     res = JSON.parse(Faraday.get(URI.escape(url)).body)
+    if res['videos'].blank?
+      return 'No Search Results'
+    end
+    if res['message'].present?
+      return res['message']
+    end
     res.dig('videos').map { |i| i.dig('video', 'url') }
   end
 
