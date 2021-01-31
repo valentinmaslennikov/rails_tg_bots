@@ -193,12 +193,12 @@ class TelegramRustController < Telegram::Bot::UpdatesController
   def porn(args)
     args = args.join(' ')
     url = "https://api.redtube.com/?data=redtube.Videos.searchVideos&output=json&search=#{args}"
-    res = JSON.parse(Faraday.get(URI.escape(url)).body)
-    if res['videos'].blank?
-      return 'No Search Results'
-    end
+    res = JSON.parse(Faraday.get(URI.escape(url)).body).with_indifferent_access
     if res['message'].present?
       return res['message']
+    end
+    if res['videos'].blank?
+      return 'No Search Results'
     end
     res.dig('videos').map { |i| i.dig('video', 'url') }
   end
