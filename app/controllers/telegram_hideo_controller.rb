@@ -2,17 +2,13 @@
 class TelegramHideoController < Telegram::Bot::UpdatesController
   before_action :init
 
-  def tweet!
-    tweets = @client.user_timeline(117652722, count: 15)
-    tw = Tweet.last&.tweet_id
-    tw ||= 0
-    tweets.map do |i|
-      if i.id > tw
-        respond_with :message, text: i['text']
-        Tweet.create!(tweet_id: i['id'])
-      end
-    end
-    respond_with :message, text: '何も新しい先輩'
+  def twit!
+    twits = @client.user_timeline(117652722, count: 15)
+    l  = -> twit { Tweet.find_by(tweet_id: twit.id).nil? }
+    new_twit = -> twit { respond_with :message, text: twit['text']; Tweet.create!(tweet_id: twit['id'])}
+    new_twits = twits.select &l
+    new_twits.map{|i| new_twit.call(i)}
+    respond_with :message, text: 'иди своей дорогой, сталкер'
   end
 
   private
