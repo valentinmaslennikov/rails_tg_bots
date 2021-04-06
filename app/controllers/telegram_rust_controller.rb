@@ -42,7 +42,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
       respond_with :message, text: PT.sample
       return
     end
-    if message['text'] && RussianObscenity.obscene?(message['text'])
+    if @user.username!='loyalistscfa' && message['text'] && RussianObscenity.obscene?(message['text'])
       bot.delete_message(chat_id: chat['id'], message_id: message['message_id'])
       Offence.create!(text: message['text'], username: message['from']['username'])
       respond_with :message, text: "#{@user.first_name}:\n#{RussianObscenity.sanitize(message['text'])}"
