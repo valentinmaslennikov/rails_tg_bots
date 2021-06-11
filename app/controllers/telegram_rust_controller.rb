@@ -99,6 +99,18 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     respond_with :message, text:  "#{dist} left"
   end
 
+  def elden_ring!(*args)
+    dist = distance_of_time_in_words_to_now(Time.new(2022,01,21,2,0,0,Time.zone), include_seconds: true)
+    if args[0].eql?('hours')
+      dist = distance_of_time_in_words_to_now(Time.new(2022,01,21,2,0,0,Time.zone), include_seconds: true, accumulate_on: :hours)
+    elsif args[0].eql?('seconds')
+      dist = distance_of_time_in_words_to_now(Time.new(2022,01,21,2,0,0,Time.zone), include_seconds: true, accumulate_on: :seconds)
+    elsif args[0].eql?('minutes')
+      dist = distance_of_time_in_words_to_now(Time.new(2022,01,21,2,0,0,Time.zone), include_seconds: true, accumulate_on: :minutes)
+    end
+    respond_with :message, text:  "#{dist} left"
+  end
+
   def youtube!(*args)
     respond_with :message, text: youtube_link(args)
   end
