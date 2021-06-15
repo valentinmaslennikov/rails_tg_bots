@@ -1,5 +1,11 @@
 class KubovichController < Telegram::Bot::UpdatesController
   before_action :set_chat_id, :set_current_user, :check_player
+  before_action :check_player, except: :message
+
+
+  def message(*args)
+
+  end
 
   def start!(*args)
     @game = @chat.kubovich_games.create!(task: Kubovich::Task.find(Kubovich::Task.pluck(:id).sample))
