@@ -20,6 +20,8 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def task!(*args)
     respond_with :message, text: current_task.task
+  rescue => e
+    respond_with :message, text: e
   end
 
   def bukva!(*args)
@@ -40,6 +42,8 @@ class KubovichController < Telegram::Bot::UpdatesController
     else
       respond_with :message, text: 'не выкрикивайте с места, дождитесь очереди!'
     end
+  rescue => e
+    respond_with :message, text: e
   end
 
   def slovo!(*args)
@@ -48,21 +52,29 @@ class KubovichController < Telegram::Bot::UpdatesController
     else
       respond_with :message, text: "К сожалению вы нас покидаете"
     end
+  rescue => e
+    respond_with :message, text: e
   end
 
   def help!(*args)
     respond_with :message, text: "тут будет хелп"
+  rescue => e
+    respond_with :message, text: e
   end
 
   def drop_current_game!(*args)
     @chat.kubovich_games.find_by(aasm_state: :play).finish!
     respond_with :message, text: 'ko'
+  rescue => e
+    respond_with :message, text: e
   end
 
   private
 
   def set_chat_id
     @chat ||= Chat.find_or_create_by(system_id: chat['id'])
+  rescue => e
+    respond_with :message, text: e
   end
 
   def set_current_user
@@ -72,17 +84,25 @@ class KubovichController < Telegram::Bot::UpdatesController
       user.username = from['username']
       user.chat = @chat
     end
+  rescue => e
+    respond_with :message, text: e
   end
 
   def current_game
     @current_game ||= @chat.kubovich_games.find_by(aasm_state: :play)
+  rescue => e
+    respond_with :message, text: e
   end
 
   def current_step
     @current_step ||= current_game.current_step
+  rescue => e
+    respond_with :message, text: e
   end
 
   def current_task
     @current_task ||= current_game.task
+  rescue => e
+    respond_with :message, text: e
   end
 end
