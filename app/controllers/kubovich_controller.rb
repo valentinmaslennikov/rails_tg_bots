@@ -32,10 +32,12 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def bukva!(*args)
     if current_step.user.username.eql? @user.username
-      result = if current_step.answer_value.nil?
-                 current_task.answer.downcase.split('').reduce('') { |acc, i| i.eql?(args[0].downcase.strip) ? acc + i : acc + '_ ' }
+      result = if current_task.answer.downcase.include?(args[0].downcase.strip)
+                 current_game.update!(words: current_game.words + args[0].downcase.strip)
+                 words = current_game.reload.words.split('')
+                 current_task.answer.downcase.split('').reduce('') { |acc, i| ([i] & words).present? ? acc + i : acc + '_ ' }
                else
-                 current_step.answer_value.split('').reduce('') { |acc, i| i.eql?(args[0].downcase.strip) ? acc + i : acc + '_ ' }
+                 'к сожалению такой буквы тут нет'
                end
 
       current_step.update!(answer_value: result)
@@ -72,8 +74,7 @@ class KubovichController < Telegram::Bot::UpdatesController
   end
 
   def help!(*args)
-    respond_with :message, text: "начинаем игру командой '/start username1 username2 username3' etc
-                                        если ваша очередь хода '/bukva м' или '/slovo ответ' "
+    respond_with :message, text: "начинаем игру командой '/start@kubovich_bot username1 username2 username3' etc, если ваша очередь хода то пишем '/bukva@kubovich_bot м' или '/slovo@kubovich_bot ответ' "
   rescue => e
     respond_with :message, text: e
   end
