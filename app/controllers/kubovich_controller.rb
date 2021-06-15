@@ -25,9 +25,9 @@ class KubovichController < Telegram::Bot::UpdatesController
   def bukva!(*args)
     if current_step.user.username.eql? @user.username
       result = if current_step.answer_value.nil?
-                 current_task.answer.split('').reduce('') { |acc, i| i.eql?('a') ? acc + i : acc + '_' }
+                 current_task.answer.downcase.split('').reduce('') { |acc, i| i.eql?(args[0].downcase.strip) ? acc + i : acc + '_' }
                else
-                 current_step.answer_value.split('').reduce('') { |acc, i| i.eql?(args[0].strip) ? acc + i : acc + '_' }
+                 current_step.answer_value.split('').reduce('') { |acc, i| i.eql?(args[0].downcase.strip) ? acc + i : acc + '_' }
                end
 
       if current_game.steps.where('position > ?', current_step.position).first.present?
