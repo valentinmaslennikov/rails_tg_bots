@@ -38,7 +38,7 @@ class KubovichController < Telegram::Bot::UpdatesController
         current_game.steps.first.play!
       end
 
-      respond_with :message, text: "#{result}\n#{@game.users.sample.username} вращайте барабан/буква/слово целиком"
+      respond_with :message, text: "#{result}\n#{current_step.user.username} вращайте барабан/буква/слово целиком"
     else
       respond_with :message, text: 'не выкрикивайте с места, дождитесь очереди!'
     end
