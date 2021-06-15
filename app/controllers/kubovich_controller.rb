@@ -65,7 +65,7 @@ class KubovichController < Telegram::Bot::UpdatesController
   end
 
   def help!(*args)
-    respond_with :message, text: "начинаем игру командой '/start username1 username2 username3' etc\n
+    respond_with :message, text: "начинаем игру командой '/start username1 username2 username3' etc
                                         если ваша очередь хода '/bukva м' или '/slovo ответ' "
   rescue => e
     respond_with :message, text: e
@@ -118,6 +118,7 @@ class KubovichController < Telegram::Bot::UpdatesController
   def check_player
     if current_game.present? && !current_game.users.include?(@user)
       respond_with :message, text: 'что за крики из зала? выведите его в коридор, и расстреляйте его там нахуй!'
+      throw(:abort)
     end
   rescue => e
     respond_with :message, text: e
