@@ -4,7 +4,7 @@
 #
 #  id         :bigint           not null, primary key
 #  aasm_state :integer
-#  words      :string
+#  words      :string           default("")
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  chat_id    :bigint

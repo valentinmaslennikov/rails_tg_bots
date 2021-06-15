@@ -48,7 +48,7 @@ ActiveRecord::Schema.define(version: 2021_06_15_192910) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "aasm_state"
-    t.string "words"
+    t.string "words", default: ""
     t.index ["chat_id"], name: "index_kubovich_games_on_chat_id"
   end
 
