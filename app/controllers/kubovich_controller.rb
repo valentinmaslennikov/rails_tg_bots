@@ -52,8 +52,10 @@ class KubovichController < Telegram::Bot::UpdatesController
     if current_step.user.username.eql? @user.username
       if current_task.answer.downcase.eql?(args[0].downcase.strip)
         respond_with :message, text: "И у нас победитель!"
+        current_game.finish!
       else
         respond_with :message, text: "К сожалению вы нас покидаете"
+        current_game.users.delete(@user)
       end
     else
       respond_with :message, text: 'не выкрикивайте с места, дождитесь очереди!'
