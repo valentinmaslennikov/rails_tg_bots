@@ -1,5 +1,5 @@
 class KubovichController < Telegram::Bot::UpdatesController
-  before_action :set_chat_id, :set_current_user
+  before_action :set_chat_id, :set_current_user, :check_player
 
   def start!(*args)
     @game = @chat.kubovich_games.create!(task: Kubovich::Task.find(Kubovich::Task.pluck(:id).sample))
@@ -32,6 +32,8 @@ class KubovichController < Telegram::Bot::UpdatesController
                  current_step.answer_value.split('').reduce('') { |acc, i| i.eql?(args[0].downcase.strip) ? acc + i : acc + '_ ' }
                end
 
+      current_step.update!(answer_value: result)
+
       if current_game.steps.where('position > ?', current_step.position).first.present?
         current_game.steps.where('position > ?', current_step.position).first.play!
       else
@@ -47,10 +49,14 @@ class KubovichController < Telegram::Bot::UpdatesController
   end
 
   def slovo!(*args)
-    if current_task.answer.downcase.eql?(args[0].downcase.strip)
-      respond_with :message, text: "И у нас победитель!"
+    if current_step.user.username.eql? @user.username
+      if current_task.answer.downcase.eql?(args[0].downcase.strip)
+        respond_with :message, text: "И у нас победитель!"
+      else
+        respond_with :message, text: "К сожалению вы нас покидаете"
+      end
     else
-      respond_with :message, text: "К сожалению вы нас покидаете"
+      respond_with :message, text: 'не выкрикивайте с места, дождитесь очереди!'
     end
   rescue => e
     respond_with :message, text: e
@@ -80,9 +86,9 @@ class KubovichController < Telegram::Bot::UpdatesController
   def set_current_user
     @user = User.find_or_create_by(telegram_id: from['id']) do |user|
       user.first_name = from['first_name']
-      user.last_name = from['last_name']
-      user.username = from['username']
-      user.chat = @chat
+      user.last_name  = from['last_name']
+      user.username   = from['username']
+      user.chat       = @chat
     end
   rescue => e
     respond_with :message, text: e
@@ -102,6 +108,14 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def current_task
     @current_task ||= current_game.task
+  rescue => e
+    respond_with :message, text: e
+  end
+
+  def check_player
+    unless current_game.users.include?(@user)
+      respond_with :message, text: 'что за крики из зала? выведите его в коридор, и расстреляйте его там нахуй!'
+    end
   rescue => e
     respond_with :message, text: e
   end
