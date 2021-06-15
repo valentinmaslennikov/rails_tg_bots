@@ -24,7 +24,7 @@ class Kubovich::Game < ApplicationRecord
   has_one :task, through: :game_task, class_name: 'Kubovich::Task'
   belongs_to :chat
 
-  has_many :steps, -> { order(position: :asc) }, class_name: 'Kubovich::Step'
+  has_many :steps, -> { order(position: :asc) }, class_name: 'Kubovich::Step', dependent: :destroy
 
   has_one :result, class_name: 'Kubovich::Result'
 

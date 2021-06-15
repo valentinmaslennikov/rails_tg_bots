@@ -32,8 +32,8 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def bukva!(*args)
     if current_step.user.username.eql? @user.username
-      result = if current_task.answer.downcase.include?(args[0].downcase.strip)
-                 current_game.update!(words: current_game.words + args[0].downcase.strip)
+      result = if current_task.answer.downcase.include?(args.first.to_s.downcase.strip)
+                 current_game.update!(words: current_game.words + args.first.to_s.downcase.strip)
                  words = current_game.reload.words.split('')
                  current_task.answer.downcase.split('').reduce('') { |acc, i| ([i] & words).present? ? acc + i : acc + '_ ' }
                else
@@ -125,7 +125,7 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def check_player
     if current_game.present? && !current_game.users.include?(@user)
-      respond_with :message, text: 'что за крики из зала? выведите его в коридор, и расстреляйте его там нахуй!'
+      respond_with :message, text: 'что за крики из зала? выведите его в коридор и расстреляйте его там нахуй!'
       throw(:abort)
     end
   rescue => e
