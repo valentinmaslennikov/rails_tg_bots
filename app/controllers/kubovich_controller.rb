@@ -62,6 +62,7 @@ class KubovichController < Telegram::Bot::UpdatesController
       else
         respond_with :message, text: "К сожалению вы нас покидаете"
         current_game.users.delete(@user)
+        current_step.destroy
       end
     else
       respond_with :message, text: 'не выкрикивайте с места, дождитесь очереди!'
