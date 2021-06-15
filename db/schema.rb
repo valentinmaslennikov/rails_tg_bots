@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_30_081723) do
+ActiveRecord::Schema.define(version: 2021_06_15_165823) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,59 @@ ActiveRecord::Schema.define(version: 2021_01_30_081723) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "purge_mod"
+  end
+
+  create_table "game_tasks", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "kubovich_game_tasks", force: :cascade do |t|
+    t.bigint "game_id"
+    t.bigint "task_id"
+    t.index ["game_id"], name: "index_kubovich_game_tasks_on_game_id"
+    t.index ["task_id"], name: "index_kubovich_game_tasks_on_task_id"
+  end
+
+  create_table "kubovich_games", force: :cascade do |t|
+    t.bigint "chat_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "aasm_state"
+    t.index ["chat_id"], name: "index_kubovich_games_on_chat_id"
+  end
+
+  create_table "kubovich_games_users", force: :cascade do |t|
+    t.bigint "game_id"
+    t.bigint "user_id"
+    t.index ["game_id"], name: "index_kubovich_games_users_on_game_id"
+    t.index ["user_id"], name: "index_kubovich_games_users_on_user_id"
+  end
+
+  create_table "kubovich_results", force: :cascade do |t|
+    t.bigint "game_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["game_id"], name: "index_kubovich_results_on_game_id"
+  end
+
+  create_table "kubovich_steps", force: :cascade do |t|
+    t.bigint "game_id"
+    t.bigint "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "position"
+    t.string "answer_value"
+    t.integer "aasm_state"
+    t.index ["game_id"], name: "index_kubovich_steps_on_game_id"
+    t.index ["user_id"], name: "index_kubovich_steps_on_user_id"
+  end
+
+  create_table "kubovich_tasks", force: :cascade do |t|
+    t.text "task"
+    t.string "answer"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "offences", force: :cascade do |t|
