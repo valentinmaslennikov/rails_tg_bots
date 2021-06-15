@@ -11,7 +11,7 @@ class KubovichController < Telegram::Bot::UpdatesController
 
     @game.start!
 
-    current_game.step.first.play!
+    current_game.steps.first.play!
 
     respond_with :message, text: "Мы начинаем, вот задание на 1й тур \n #{current_task.task} \n #{current_step.user.username} вращайте барабан/буква/слово целиком"
   rescue => e
