@@ -115,7 +115,7 @@ class KubovichController < Telegram::Bot::UpdatesController
   end
 
   def check_player
-    unless current_game.users.include?(@user)
+    unless current_game.present? && current_game.users.include?(@user)
       respond_with :message, text: 'что за крики из зала? выведите его в коридор, и расстреляйте его там нахуй!'
     end
   rescue => e
