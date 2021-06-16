@@ -34,7 +34,7 @@ class Kubovich::Step < ApplicationRecord
     state :hold
 
     event :play do
-      transitions from: [:draft, :hold], to: :play
+      transitions from: [:draft, :hold, :play], to: :play
     end
 
     event :hold do

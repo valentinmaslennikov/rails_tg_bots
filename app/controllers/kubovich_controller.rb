@@ -1,11 +1,11 @@
 class KubovichController < Telegram::Bot::UpdatesController
-  before_action :set_chat_id, :set_current_user, :check_player
+  include ErrorHandleable
+
+  before_action :set_chat_id, :set_current_user
   before_action :check_player, except: [:message, :drop_current_game!]
+  before_action :is_active_player?, only: [:bukva!, :slovo!]
 
-
-  def message(*args)
-
-  end
+  def message(*args) end
 
   def start!(*args)
     ActiveRecord::Base.transaction do
@@ -33,48 +33,39 @@ class KubovichController < Telegram::Bot::UpdatesController
   end
 
   def bukva!(*args)
-    if current_step.user.username.eql? @user.username
-      result = if current_task.answer.downcase.include?(args.first.to_s.downcase.strip)
-                 current_game.update!(words: current_game.words + args.first.to_s.downcase.strip)
-                 words = current_game.reload.words.split('')
-                 current_task.answer.downcase.split('').reduce('') { |acc, i| ([i] & words).present? ? acc + i : acc + '_ ' }
+    result = if current_task.answer.downcase.include?(args.first.to_s.downcase.strip)
+               current_game.update!(words: current_game.words + args.first.to_s.downcase.strip)
+               words = current_game.reload.words.split('')
+               if current_game.steps.where('position > ?', current_step.position).first.present?
+                 current_game.steps.where('position > ?', current_step.position).first.play!
                else
-                 'к сожалению такой буквы тут нет'
+                 current_game.steps.first.play!
                end
+               current_task.answer.downcase.split('').reduce('') { |acc, i| ([i] & words).present? ? acc + i : acc + '_ ' }
+             else
+               'к сожалению такой буквы тут нет'
+             end
 
-      current_step.update!(answer_value: result)
+    current_step.update!(answer_value: result)
 
-      if current_game.steps.where('position > ?', current_step.position).first.present?
-        current_game.steps.where('position > ?', current_step.position).first.play!
-      else
-        current_game.steps.first.play!
-      end
-
-      respond_with :message, text: "#{result}\n#{current_game.current_step.user.username} вращайте барабан/буква/слово целиком"
-    else
-      respond_with :message, text: 'не выкрикивайте с места, дождитесь очереди!'
-    end
+    respond_with :message, text: "#{result}\n#{current_game.current_step.user.username} вращайте барабан/буква/слово целиком"
   rescue => e
     respond_with :message, text: e
   end
 
   def slovo!(*args)
-    if current_step.user.username.eql? @user.username
-      if current_task.answer.downcase.eql?(args[0].downcase.strip)
-        respond_with :message, text: "И у нас победитель!"
-        current_game.finish!
-      else
-        respond_with :message, text: "К сожалению вы нас покидаете"
-        if current_game.steps.where('position > ?', current_step.position).first.present?
-          current_game.steps.where('position > ?', current_step.position).first.play!
-        else
-          current_game.steps.first.play!
-        end
-        current_game.users.delete(@user)
-        current_step.destroy
-      end
+    if current_task.answer.downcase.eql?(args[0].downcase.strip)
+      respond_with :message, text: "И у нас победитель!"
+      current_game.finish!
     else
-      respond_with :message, text: 'не выкрикивайте с места, дождитесь очереди!'
+      respond_with :message, text: "К сожалению вы нас покидаете"
+      if current_game.steps.where('position > ?', current_step.position).first.present?
+        current_game.steps.where('position > ?', current_step.position).first.play!
+      else
+        current_game.steps.first.play!
+      end
+      current_game.users.delete(@user)
+      current_step.destroy
     end
   rescue => e
     respond_with :message, text: e
@@ -101,6 +92,10 @@ class KubovichController < Telegram::Bot::UpdatesController
     respond_with :message, text: e
   end
 
+  def is_active_player?
+    raise Errors::WrongPlayer unless current_step.user.username.eql? @user.username
+  end
+
   def set_current_user
     @user = User.find_or_create_by(telegram_id: from['id']) do |user|
       user.first_name = from['first_name']
@@ -114,8 +109,7 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def current_game
     @current_game ||= @chat.kubovich_games.find_by(aasm_state: :play)
-  rescue => e
-    respond_with :message, text: e
+    raise Errors::NoGameInProgressError if @current_game.nil?
   end
 
   def current_step
