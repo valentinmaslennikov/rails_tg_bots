@@ -1,7 +1,7 @@
 class KubovichController < TelegramController
 
   before_action :set_chat_id, :set_current_user
-  before_action :check_player, except: [:message, :drop_current_game!, :task!, :start!]
+  before_action :check_player, except: [:message, :drop_current_game!, :task!, :start!, :help!]
   before_action :is_active_player?, only: [:bukva!, :slovo!]
 
   def message(*args) end
