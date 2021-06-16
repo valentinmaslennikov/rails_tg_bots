@@ -120,8 +120,6 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def current_task
     @current_task ||= current_game.task
-  rescue => e
-    respond_with :message, text: e
   end
 
   def check_player
