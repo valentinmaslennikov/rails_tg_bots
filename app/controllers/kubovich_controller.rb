@@ -1,16 +1,19 @@
-class KubovichController < TelegramController
+class KubovichController < Telegram::Bot::UpdatesController
+  include ErrorHandleable
 
   before_action :set_chat_id, :set_current_user
   before_action :check_player, except: [:message, :drop_current_game!, :task!, :start!, :help!]
   before_action :is_active_player?, only: [:bukva!, :slovo!]
+  before_action :is_current_game?, only: [:bukva!, :slovo!, :task!, :drop_current_game!]
 
   def message(*args) end
 
   def start!(*args)
     ActiveRecord::Base.transaction do
       @game = @chat.kubovich_games.create!(task: Kubovich::Task.find(Kubovich::Task.pluck(:id).sample))
+      raise Errors::NotEnoughPlayers if args.length < 2
       args.each do |i|
-        user = User.find_or_create_by!(username: i, chat: @chat)
+        user = User.find_by!(username: i, chat: @chat)
         @game.users << user
         @game.steps.create!(user: user)
       end
@@ -28,6 +31,7 @@ class KubovichController < TelegramController
   end
 
   def bukva!(*args)
+    byebug
     result = if current_task.answer.downcase.include?(args.first.to_s.downcase.strip)
                current_game.update!(words: current_game.words + args.first.to_s.downcase.strip)
                words = current_game.reload.words.split('')
@@ -40,9 +44,9 @@ class KubovichController < TelegramController
              else
                'к сожалению такой буквы тут нет'
              end
-
+    byebug
     current_step.update!(answer_value: result)
-
+    byebug
     respond_with :message, text: "#{result}\n#{current_game.current_step.user.username} вращайте барабан/буква/слово целиком"
   end
 
@@ -85,6 +89,10 @@ class KubovichController < TelegramController
     raise Errors::WrongPlayer unless current_step.user.username.eql? @user.username
   end
 
+  def is_current_game?
+    raise Errors::NoGameInProgressError if current_game.nil?
+  end
+
   def set_current_user
     @user = User.find_or_create_by(telegram_id: from['id']) do |user|
       user.first_name = from['first_name']
@@ -96,7 +104,6 @@ class KubovichController < TelegramController
 
   def current_game
     @current_game ||= @chat.kubovich_games.find_by(aasm_state: :play)
-    raise Errors::NoGameInProgressError if @current_game.nil?
   end
 
   def current_step
