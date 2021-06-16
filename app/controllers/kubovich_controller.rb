@@ -20,7 +20,7 @@ class KubovichController < Telegram::Bot::UpdatesController
       @game.start!
       @game.steps.first.play!
 
-      respond_with :message, text: "Мы начинаем, вот задание на 1й тур\n#{@game.task.task}\n#{@game.steps.first.user.username} вращайте барабан/буква/слово целиком"
+      respond_with :message, text: "Мы начинаем, вот задание на 1й тур\n#{@game.task.task}\n#{@game.steps.first.user.username.prepend('@')} вращайте барабан/буква/слово целиком"
     end
   rescue => e
     respond_with :message, text: e
@@ -44,7 +44,7 @@ class KubovichController < Telegram::Bot::UpdatesController
                'к сожалению такой буквы тут нет'
              end
     current_step.update!(answer_value: result)
-    respond_with :message, text: "#{result}\n#{current_game.current_step.user.username} вращайте барабан/буква/слово целиком"
+    respond_with :message, text: "#{result}\n#{current_game.current_step.user.username.prepend('@')} вращайте барабан/буква/слово целиком"
   end
 
   def slovo!(*args)
