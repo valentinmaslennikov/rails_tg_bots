@@ -106,6 +106,8 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def current_step
     @current_step ||= current_game.current_step
+  rescue => e
+    
   end
 
   def current_task
