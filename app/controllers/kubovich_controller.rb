@@ -54,13 +54,13 @@ class KubovichController < Telegram::Bot::UpdatesController
       current_game.finish!
     else
       respond_with :message, text: "К сожалению вы нас покидаете"
+      current_step.destroy
       if current_game.steps.where('position > ?', current_step.position).first.present?
         current_game.steps.where('position > ?', current_step.position).first.play!
       else
         current_game.steps.first.play!
       end
       current_game.users.delete(@user)
-      current_step.destroy
     end
   rescue => e
     respond_with :message, text: e
