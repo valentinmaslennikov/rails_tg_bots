@@ -1,8 +1,7 @@
-class KubovichController < Telegram::Bot::UpdatesController
-  include ErrorHandleable
+class KubovichController < TelegramController
 
   before_action :set_chat_id, :set_current_user
-  before_action :check_player, except: [:message, :drop_current_game!]
+  before_action :check_player, except: [:message, :drop_current_game!, :task!, :start!]
   before_action :is_active_player?, only: [:bukva!, :slovo!]
 
   def message(*args) end
@@ -11,16 +10,14 @@ class KubovichController < Telegram::Bot::UpdatesController
     ActiveRecord::Base.transaction do
       @game = @chat.kubovich_games.create!(task: Kubovich::Task.find(Kubovich::Task.pluck(:id).sample))
       args.each do |i|
-        user = User.find_or_create_by!(username: i)
+        user = User.find_or_create_by!(username: i, chat: @chat)
         @game.users << user
         @game.steps.create!(user: user)
       end
-
       @game.start!
+      @game.steps.first.play!
 
-      current_game.steps.first.play!
-
-      respond_with :message, text: "Мы начинаем, вот задание на 1й тур\n#{current_task.task}\n#{current_step.user.username} вращайте барабан/буква/слово целиком"
+      respond_with :message, text: "Мы начинаем, вот задание на 1й тур\n#{@game.task.task}\n#{@game.steps.first.user.username} вращайте барабан/буква/слово целиком"
     end
   rescue => e
     respond_with :message, text: e
@@ -28,8 +25,6 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def task!(*args)
     respond_with :message, text: current_task.task
-  rescue => e
-    respond_with :message, text: e
   end
 
   def bukva!(*args)
@@ -49,8 +44,6 @@ class KubovichController < Telegram::Bot::UpdatesController
     current_step.update!(answer_value: result)
 
     respond_with :message, text: "#{result}\n#{current_game.current_step.user.username} вращайте барабан/буква/слово целиком"
-  rescue => e
-    respond_with :message, text: e
   end
 
   def slovo!(*args)
@@ -73,15 +66,11 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def help!(*args)
     respond_with :message, text: "начинаем игру командой '/start@kubovich_bot username1 username2 username3' etc, если ваша очередь хода то пишем '/bukva@kubovich_bot м' или '/slovo@kubovich_bot ответ' "
-  rescue => e
-    respond_with :message, text: e
   end
 
   def drop_current_game!(*args)
-    @chat.kubovich_games.find_by(aasm_state: :play).finish!
+    current_game.finish!
     respond_with :message, text: 'ko'
-  rescue => e
-    respond_with :message, text: e
   end
 
   private
@@ -103,20 +92,15 @@ class KubovichController < Telegram::Bot::UpdatesController
       user.username   = from['username']
       user.chat       = @chat
     end
-  rescue => e
-    respond_with :message, text: e
   end
 
   def current_game
     @current_game ||= @chat.kubovich_games.find_by(aasm_state: :play)
     raise Errors::NoGameInProgressError if @current_game.nil?
-    throw(:abort)
   end
 
   def current_step
     @current_step ||= current_game.current_step
-  rescue => e
-    respond_with :message, text: e
   end
 
   def current_task
@@ -125,10 +109,7 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def check_player
     if current_game.present? && !current_game.users.include?(@user)
-      respond_with :message, text: 'что за крики из зала? выведите его в коридор и расстреляйте его там нахуй!'
-      throw(:abort)
+      raise Errors::OtherUser
     end
-  rescue => e
-    respond_with :message, text: e
   end
 end
