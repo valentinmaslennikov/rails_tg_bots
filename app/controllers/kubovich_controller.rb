@@ -35,13 +35,13 @@ class KubovichController < Telegram::Bot::UpdatesController
     result = if current_task.answer.downcase.include?(args.first.to_s.downcase.strip)
                current_game.update!(words: current_game.words + args.first.to_s.downcase.strip)
                words = current_game.reload.words.split('')
+               current_task.answer.downcase.split('').reduce('') { |acc, i| ([i] & words).present? ? acc + i : acc + '_ ' }
+             else
                if current_game.steps.where('position > ?', current_step.position).first.present?
                  current_game.steps.where('position > ?', current_step.position).first.play!
                else
                  current_game.steps.first.play!
                end
-               current_task.answer.downcase.split('').reduce('') { |acc, i| ([i] & words).present? ? acc + i : acc + '_ ' }
-             else
                'к сожалению такой буквы тут нет'
              end
     current_step.update!(answer_value: result)
