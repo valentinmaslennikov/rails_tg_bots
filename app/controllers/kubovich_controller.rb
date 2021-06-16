@@ -1,6 +1,6 @@
 class KubovichController < Telegram::Bot::UpdatesController
   before_action :set_chat_id, :set_current_user, :check_player
-  before_action :check_player, except: [:message, :drop_current_game]
+  before_action :check_player, except: [:message, :drop_current_game!]
 
 
   def message(*args)
