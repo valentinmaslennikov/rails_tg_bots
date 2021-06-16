@@ -8,18 +8,20 @@ class KubovichController < Telegram::Bot::UpdatesController
   end
 
   def start!(*args)
-    @game = @chat.kubovich_games.create!(task: Kubovich::Task.find(Kubovich::Task.pluck(:id).sample))
-    args.each do |i|
-      user = User.find_or_create_by!(username: i)
-      @game.users << user
-      @game.steps.create!(user: user)
+    ActiveRecord::Base.transaction do
+      @game = @chat.kubovich_games.create!(task: Kubovich::Task.find(Kubovich::Task.pluck(:id).sample))
+      args.each do |i|
+        user = User.find_or_create_by!(username: i)
+        @game.users << user
+        @game.steps.create!(user: user)
+      end
+
+      @game.start!
+
+      current_game.steps.first.play!
+
+      respond_with :message, text: "Мы начинаем, вот задание на 1й тур\n#{current_task.task}\n#{current_step.user.username} вращайте барабан/буква/слово целиком"
     end
-
-    @game.start!
-
-    current_game.steps.first.play!
-
-    respond_with :message, text: "Мы начинаем, вот задание на 1й тур\n#{current_task.task}\n#{current_step.user.username} вращайте барабан/буква/слово целиком"
   rescue => e
     respond_with :message, text: e
   end
