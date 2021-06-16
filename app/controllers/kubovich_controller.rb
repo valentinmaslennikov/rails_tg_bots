@@ -110,6 +110,7 @@ class KubovichController < Telegram::Bot::UpdatesController
   def current_game
     @current_game ||= @chat.kubovich_games.find_by(aasm_state: :play)
     raise Errors::NoGameInProgressError if @current_game.nil?
+    throw(:abort)
   end
 
   def current_step
