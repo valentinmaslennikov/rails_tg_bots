@@ -10,7 +10,7 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def start!(*args)
     ActiveRecord::Base.transaction do
-      raise Errors::CurrentGameInProgressError if is_current_game?
+      raise Errors::CurrentGameInProgressError unless current_game.nil?
       @game = @chat.kubovich_games.create!(task: Kubovich::Task.find(Kubovich::Task.pluck(:id).sample))
       raise Errors::NotEnoughPlayers if args.length < 2
       args.each do |i|
