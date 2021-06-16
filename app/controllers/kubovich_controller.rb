@@ -3,10 +3,8 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   before_action :set_chat_id, :set_current_user
   before_action :check_player, except: [:message, :drop_current_game!, :task!, :start!, :help!]
-  before_action :is_active_player?, only: [:bukva!, :slovo!]
-  before_action :is_current_game?, only: [:bukva!, :slovo!, :task!, :drop_current_game!]
-
-  def message(*args) end
+  before_action :is_active_player?, only: [:slovo!]
+  before_action :is_current_game?, only: [:slovo!, :task!, :drop_current_game!]
 
   def start!(*args)
     ActiveRecord::Base.transaction do
@@ -31,9 +29,13 @@ class KubovichController < Telegram::Bot::UpdatesController
     respond_with :message, text: current_task.task
   end
 
-  def bukva!(*args)
-    result = if current_task.answer.downcase.include?(args.first.to_s.downcase.strip)
-               current_game.update!(words: current_game.words + args.first.to_s.downcase.strip)
+  def message(msg)
+    return if msg.length > 1
+    is_active_player?
+    is_current_game?
+
+    result = if current_task.answer.downcase.include?(msg.to_s.downcase.strip)
+               current_game.update!(words: current_game.words + msg.to_s.downcase.strip)
                words = current_game.reload.words.split('')
                current_task.answer.downcase.split('').reduce('') { |acc, i| ([i] & words).present? ? acc + i : acc + '_ ' }
              else
@@ -45,7 +47,21 @@ class KubovichController < Telegram::Bot::UpdatesController
                'к сожалению такой буквы тут нет'
              end
     current_step.update!(answer_value: result)
-    respond_with :message, text: "#{result}\n#{current_game.current_step.user.username.prepend('@')} вращайте барабан/буква/слово целиком"
+
+    next_turn_username = current_game.current_step.user.username.prepend('@')
+    next_turn_message = "#{result}\n#{next_turn_username} вращайте барабан/буква/слово целиком"
+    keyboard_buttons = [
+        ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й'], 
+        ['К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф'], 
+        ['Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э', 'Ю', 'Я']
+      ]
+    markup = {
+        keyboard: keyboard_buttons,
+        resize_keyboard: true,
+        one_time_keyboard: true,
+        selective: true
+      }
+    respond_with :message, text: next_turn_message, :reply_markup: markup
   end
 
   def slovo!(*args)
