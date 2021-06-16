@@ -31,7 +31,6 @@ class KubovichController < Telegram::Bot::UpdatesController
   end
 
   def bukva!(*args)
-    byebug
     result = if current_task.answer.downcase.include?(args.first.to_s.downcase.strip)
                current_game.update!(words: current_game.words + args.first.to_s.downcase.strip)
                words = current_game.reload.words.split('')
@@ -44,9 +43,7 @@ class KubovichController < Telegram::Bot::UpdatesController
              else
                'к сожалению такой буквы тут нет'
              end
-    byebug
     current_step.update!(answer_value: result)
-    byebug
     respond_with :message, text: "#{result}\n#{current_game.current_step.user.username} вращайте барабан/буква/слово целиком"
   end
 
