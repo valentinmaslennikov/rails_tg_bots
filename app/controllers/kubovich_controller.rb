@@ -85,8 +85,6 @@ class KubovichController < Telegram::Bot::UpdatesController
 
   def is_active_player?
     raise Errors::WrongPlayer unless current_step.user.username.eql? @user.username
-  rescue =>e
-    
   end
 
   def is_current_game?
