@@ -14,7 +14,7 @@ class KubovichController < Telegram::Bot::UpdatesController
       @game = @chat.kubovich_games.create!(task: Kubovich::Task.find(Kubovich::Task.pluck(:id).sample))
       raise Errors::NotEnoughPlayers if args.length < 2
       args.each do |i|
-        user = User.find_by!(username: i.gsub('@',''), chat: @chat)
+        user = User.find_by!(username: i.gsub('@', ''), chat: @chat)
         @game.users << user
         @game.steps.create!(user: user)
       end
@@ -37,10 +37,12 @@ class KubovichController < Telegram::Bot::UpdatesController
                words = current_game.reload.words.split('')
                current_task.answer.downcase.split('').reduce('') { |acc, i| ([i] & words).present? ? acc + i : acc + '_ ' }
              else
-               if current_game.steps.where('position > ?', current_step.position).first.present?
-                 current_game.steps.where('position > ?', current_step.position).first.play!
-               else
-                 current_game.steps.first.play!
+               if current_game.steps.length > 1
+                 if current_game.steps.where('position > ?', current_step.position).first.present?
+                   current_game.steps.where('position > ?', current_step.position).first.play!
+                 else
+                   current_game.steps.first.play!
+                 end
                end
                'к сожалению такой буквы тут нет'
              end
@@ -107,7 +109,7 @@ class KubovichController < Telegram::Bot::UpdatesController
   def current_step
     @current_step ||= current_game.current_step
   rescue => e
-    
+
   end
 
   def current_task
