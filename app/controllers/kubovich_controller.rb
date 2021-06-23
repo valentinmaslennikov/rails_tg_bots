@@ -1,10 +1,11 @@
 class KubovichController < Telegram::Bot::UpdatesController
+  include Telegram::Bot::UpdatesController::MessageContext
   include ErrorHandleable
 
   before_action :set_chat_id, :set_current_user
   before_action :check_player, except: [:message, :drop_current_game!, :task!, :start!, :help!]
-  before_action :is_current_game?, only: [:bukva!, :slovo!, :task!, :drop_current_game!]
-  before_action :is_active_player?, only: [:bukva!, :slovo!]
+  before_action :is_current_game?, only: [:slovo!, :task!, :drop_current_game!]
+  before_action :is_active_player?, only: [:slovo!]
 
   def message(*args) end
 
@@ -21,7 +22,9 @@ class KubovichController < Telegram::Bot::UpdatesController
       @game.start!
       @game.steps.first.play!
 
-      respond_with :message, text: "Мы начинаем, вот задание на 1й тур\n#{@game.task.task}\n#{@game.steps.first.user.username.prepend('@')} вращайте барабан/буква/слово целиком"
+      save_context :participation
+      respond_with :message, text: "Мы начинаем, вот задание на 1й тур\n#{@game.task.task}\n#{@game.steps.first.user.username.prepend('@')} вращайте барабан/буква/слово целиком",
+                   reply_markup: respond_keyboard
     end
   rescue => e
     respond_with :message, text: e
@@ -31,9 +34,10 @@ class KubovichController < Telegram::Bot::UpdatesController
     respond_with :message, text: current_task.task
   end
 
-  def bukva!(*args)
-    result = if current_task.answer.downcase.include?(args.first.to_s.downcase.strip)
-               current_game.update!(words: current_game.words + args.first.to_s.downcase.strip)
+  def participation(char)
+    puts char
+    result = if current_task.answer.downcase.include?(char.downcase.strip)
+               current_game.update!(words: current_game.words + char.downcase.strip)
                words = current_game.reload.words.split('')
                current_task.answer.downcase.split('').reduce('') { |acc, i| ([i] & words).present? ? acc + i : acc + '_ ' }
              else
@@ -46,8 +50,13 @@ class KubovichController < Telegram::Bot::UpdatesController
                end
                'к сожалению такой буквы тут нет'
              end
+
     current_step.update!(answer_value: result)
-    respond_with :message, text: "#{result}\n#{current_game.current_step.user.username.prepend('@')} вращайте барабан/буква/слово целиком"
+
+    next_turn_username = current_game.current_step.user.username.prepend('@')
+    next_turn_message  = "#{result}\n#{next_turn_username} вращайте барабан/буква/слово целиком"
+
+    respond_with :message, text: next_turn_message, reply_markup: respond_keyboard
   end
 
   def slovo!(*args)
@@ -69,7 +78,7 @@ class KubovichController < Telegram::Bot::UpdatesController
   end
 
   def help!(*args)
-    respond_with :message, text: "начинаем игру командой '/start@kubovich_bot username1 username2 username3' etc, если ваша очередь хода то пишем '/bukva@kubovich_bot м' или '/slovo@kubovich_bot ответ' "
+    respond_with :message, text: "начинаем игру командой '/start@kubovich_bot username1 username2 username3' etc, '/slovo@kubovich_bot ответ' "
   end
 
   def drop_current_game!(*args)
@@ -78,6 +87,21 @@ class KubovichController < Telegram::Bot::UpdatesController
   end
 
   private
+
+  def respond_keyboard
+    keyboard_buttons   = [
+      %w[А Б В Г Д Е Ё Ж З И Й],
+      %w[К Л М Н О П Р С Т У Ф],
+      %w[Х Ц Ч Ш Щ Ъ Ы Ь Э Ю Я]
+    ]
+
+    {
+      keyboard:          keyboard_buttons,
+      resize_keyboard:   true,
+      one_time_keyboard: true,
+      selective:         true
+    }
+  end
 
   def set_chat_id
     @chat ||= Chat.find_or_create_by(system_id: chat['id'])
