@@ -34,10 +34,9 @@ class KubovichController < Telegram::Bot::UpdatesController
     respond_with :message, text: current_task.task
   end
 
-  def participation(char)
-    puts char
-    result = if current_task.answer.downcase.include?(char.downcase.strip)
-               current_game.update!(words: current_game.words + char.downcase.strip)
+  def participation(*char)
+    result = if current_task.answer.downcase.include?(char[0].to_s.downcase.strip)
+               current_game.update!(words: current_game.words + char[0].to_s.downcase.strip)
                words = current_game.reload.words.split('')
                current_task.answer.downcase.split('').reduce('') { |acc, i| ([i] & words).present? ? acc + i : acc + '_ ' }
              else
@@ -57,6 +56,7 @@ class KubovichController < Telegram::Bot::UpdatesController
     next_turn_message  = "#{result}\n#{next_turn_username} вращайте барабан/буква/слово целиком"
 
     save_context :participation
+    respond_with :message, reply_markup: remove_keyboard
     respond_with :message, text: next_turn_message, reply_markup: respond_keyboard
   end
 
@@ -101,6 +101,12 @@ class KubovichController < Telegram::Bot::UpdatesController
       resize_keyboard:   true,
       one_time_keyboard: true,
       selective:         true
+    }
+  end
+
+  def remove_keyboard
+    {
+      remove_keyboard: true,
     }
   end
 
