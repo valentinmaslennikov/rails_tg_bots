@@ -53,10 +53,10 @@ class KubovichController < Telegram::Bot::UpdatesController
     current_step.update!(answer_value: result)
 
     next_turn_username = current_game.current_step.user.username.prepend('@')
-    next_turn_message  = "#{result}\n#{next_turn_username} вращайте барабан/буква/слово целиком"
+    next_turn_message  = "#{next_turn_username} вращайте барабан/буква/слово целиком"
 
     save_context :participation
-    respond_with :message, reply_markup: remove_keyboard
+    respond_with :message, text: "#{result}\n", reply_markup: remove_keyboard
     respond_with :message, text: next_turn_message, reply_markup: respond_keyboard
   end
 
