@@ -32,7 +32,30 @@ module TeaBot
     # Don't generate system test files.
     config.generators.system_tests = nil
 
+    if Rails.env.production? || Rails.env.staging?
+      config.redis_config = {
+        url: ENV['REDIS_URL'],
+        port: ENV['REDIS_PORT'],
+        db: ENV['REDIS_DB'],
+        password: ENV['REDIS_PASSWORD']
+      }
+      config.sidekiq_config = {
+        url:      ENV['REDIS_URL'],
+        port:     ENV['REDIS_PORT'],
+        db:       ENV['REDIS_DB'],
+        password: ENV['REDIS_PASSWORD'],
+        network_timeout: 5
+      }
+    elsif Rails.env.test?
+      config.redis_config = { host: 'redis' }
+      config.sidekiq_config = {}
+    else
+      config.redis_config = {}
+      config.sidekiq_config = {}
+    end
+
     config.autoload_paths << Rails.root.join('lib')
     config.eager_load_paths << Rails.root.join('lib')
+    config.telegram_updates_controller.session_store = :redis_store, {expires_in: 1.month}
   end
 end
