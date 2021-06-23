@@ -37,7 +37,8 @@ module TeaBot
         url: ENV['REDIS_URL'],
         port: ENV['REDIS_PORT'],
         db: ENV['REDIS_DB'],
-        password: ENV['REDIS_PASSWORD']
+        password: ENV['REDIS_PASSWORD'],
+        ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
       }
       config.sidekiq_config = {
         url:      ENV['REDIS_URL'],
