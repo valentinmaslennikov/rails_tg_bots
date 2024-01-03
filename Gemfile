@@ -44,7 +44,7 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'annotate'
 end
-
+gem 'psych', '< 4'
 gem 'dotiw'
 
 gem 'twilio-ruby', '~> 5.45.1'
