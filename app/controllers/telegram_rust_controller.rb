@@ -217,7 +217,7 @@ class TelegramRustController < Telegram::Bot::UpdatesController
     random = text.nil? ? get_rand(3) : text
 
     urlData = "https://www.googleapis.com/youtube/v3/search?key=#{Rails.application.credentials[:YOUTUBE_API_TOKEN]}&maxResults=#{count}&part=snippet&type=video&q=#{random}"
-    res = JSON.parse(Faraday.get(URI.escape(urlData)).body)
+    res = JSON.parse(Faraday.get(CGI.escape(urlData)).body)
     rand_video_id = straight ? res['items'][0]['id']['videoId'] : res['items'].map { |i| i['id']['videoId'] }.sample
     rand_video_id.present? ? "https://www.youtube.com/watch?v=#{rand_video_id}" : 'хуй соси, такого там нет'
   rescue Exception => e
